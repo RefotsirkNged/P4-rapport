@@ -1,0 +1,54 @@
+Tokens \label{Tokens}
+    num = 'num';
+    bool = 'bool';
+    list = 'list';
+    text = 'text';
+    while = 'while';
+    for = 'for';
+    begin = 'begin';
+    end = 'end';
+    do = 'do';
+    if = 'if';
+    then = 'then';
+    else = 'else';
+    or = 'or';
+    and = 'and';
+    set = 'set';
+    dcl = 'dcl';
+    of = 'of';
+    to = 'to';
+    new = 'new';
+    func = 'func';
+    eclass = 'class';
+    main = 'Main';
+    upto = 'upto';
+    downto = 'downto';
+    boolval = 'true' | 'false';
+    is = 'is';
+    comma = ',';
+    dot = '.';
+    equals = '=';
+    notequals = '!=';
+    greater = '>';
+    less = '<';
+    greaterequals = '>=';
+    lessequals = '<=';
+    not = 'not';
+    treturn ='return';
+    minus = '-';
+    plus = '+';
+    divide = '/';
+    mult = '*';
+    mod = '%';
+    lparen = '(';
+    rparen = ')';
+    numval = digit* ('.' digit*)?;
+    newline = (cr | lf | cr lf)+;
+    id = letter(letter|digit)*;
+    textval = '"' [any - '"']* '"';
+    blank = space*;
+    comment = '/' '*'[any - ['*' + '/']]* '*' '/';
+
+Ignored Tokens
+     blank,
+     comment;

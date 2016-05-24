@@ -1,0 +1,42 @@
+\section{Abstract Syntax}
+In this section, the abstract syntax for \lang{} is presented. The abstract syntax does, unlike the grammar for the parser, not take precedence into consideration, but rather gives a more readable understanding of what is possible in the language. It is written for human readers, as computers do not understand the various ambiguities that are present in the abstract syntax.
+The syntactic Categories contains all the fundamental parts and some meta variables like b and a that stand for the Boolean Expression and the Arithmetic Expression respectively. The full abstract syntax is seen on figure \ref{fig:AS}.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[escapeinside={(*}{*)}]
+Syntactic Categories
+(*
+\(n \in \textbf{Numerals}\) \\
+\(t \in \{true\: ,\ false\} \) \\
+\(x \in \textbf{Primitive Variable}\) \\
+\(y \in \textbf{Reference Variable}\) \\
+\(b \in \textbf{Boolean Expression}\) \\
+\(a \in \textbf{Arithmetic Expression}\) \\
+\(S \in \textbf{Statement}\) \\
+\(P \in \textbf{Program}\) \\
+\(e \in \textbf{Expression} \) \\
+\(D_V \in \textbf{Variable Declaration} \) \\
+\(D_C \in \textbf{Class Declaration}\) \\
+\(D_M \in \textbf{Method Declaration} \) \\
+\(C_M \in \textbf{Method Call} \) \\
+*)
+
+Formation rules
+(*
+P ::= \(D_V\) \(M_C\) | \(D_C\) P \\
+S ::=  set x to e | set y to new Class(\(e_1,\ ...,\ e_n\)) | skip | \(S_1\) \(S_2\) | 'if' b 'then' \(B_1\) 'else' \(B_2\) 'end' | 'for' x 'upto' e 'do' B 'end' | 'for' x 'downto' e 'do' B 'end' | 'while' b 'do' B 'end' | f(\(e_1,\)\ ...,\ \(e_n\)) \(C_M\) | return e | return y \\
+a ::= n | \(a_1+a_2\) | \(a_1-a_2\) | \(a_1*a_2\) | \(\frac{a_1}{a_2}\) | \(a_1\: \%\: a_2\) | \((a_1)\) \\
+b ::= \(a_1\) = \(a_2\) | a1 > a2 | a1 < a2 | a1 <= a2 | a1 >= a2 | a1 != a2 | b1 and b2 | b1 or b2 | not b1 | (b1) | t \\
+B ::= \(D_V\) S \\
+\(D_V\) ::= dcl type x \(D_V\) | dcl classname y \(D_V\) |  \(\varepsilon\) \\
+\(D_M\) ::= dcl func x(\(type_1\ e_1,\ ...,\ type_n\ e_n\)) begin B end \(D_M\) | \(\varepsilon\) \\
+\(D_C\) ::= class ClassName begin B \(D_M\) end\\
+\(M_C\) ::= class main begin \(D_V\) S end
+*)
+    \end{lstlisting}
+    \caption{The syntactic categories and formations rules of \lang{}}
+    \label{fig:AS}
+\end{figure}
+
+In the formation rules, the different syntactic categories, and what they stand for, are described. In the two variable types - primitive and reference - the naming has to start with an uppercase letter, from A to Z, or lowercase letter, from a to z, optionally followed by a number of uppercase letters, lowercase letters and numerals, from \underline{0} to \underline{9}.

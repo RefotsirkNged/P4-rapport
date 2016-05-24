@@ -1,0 +1,131 @@
+\section{Scope Rules of \lang{}}
+In \lang{}, the scope rules are fully static scope rules, as it has static scope rules for variables and static scope rules for functions. This means that both the variables and functions are bound when they are declared. 
+\begin{comment}
+\begin{table}[H]
+    \begin{adjustbox}{center}
+        \begin{tabular}{|c|c|}
+
+\hline
+\vspace {0.1pt}  &\\
+PROC          &   \hbox{\huge \(\frac{env_V \vdash \langle D_P,\  env_P [p \mapsto (S,\  env_P)] \rangle \rightarrow_{DP} env'_P}{env_V \vdash \langle proc\ p\ is\ S;\ D_P,\ env_P \rangle \rightarrow_{DP} env'_P}\) } \vspace{0.1pt} \\ \hline 
+\vspace {0.1pt} & \\  
+PROC-EMPTY    & \hbox{\huge \(env_V \vdash \langle \varepsilon, env_P \rangle \rightarrow_{DP} env_P \)} \vspace {0.1pt} \\ \hline
+\vspace {0.1pt} & \\ 
+CALL-STAT-DYN & \hbox{\huge \(\frac{e'v[next \rightarrow e], e_p \vdash \langle S, \  st\rangle \rightarrow St'}{e_v , e_p \vdash \langle Call \  p, St \rangle \rightarrow St'} \ where \begin{aligned} e_p (p) = \langle S, e'_v \\ e = e_v (next) \end{aligned}\) } \vspace{0.1pt}  \\ \hline
+
+        \end{tabular}
+    \end{adjustbox}
+    
+    \caption{Caption}
+    \label{fig:TrannyRulesProc}
+\end{table}
+\end{comment}
+On the table \ref{fig:Func} the transition rules for function declarations are shown in the first two rows and the transition rule for function calls in the last row.
+
+
+\begin{table}[H]
+    \begin{adjustbox}{center}
+        \begin{tabular}{|c|c|}
+        \hline
+\vspace {0.1pt} &\\
+FUNC-Dcl        &   \hbox{\huge \(\frac{env_V\, \vdash \langle D_M\: ,\  env_M [f \mapsto (B\: ,\  env_M)] \rangle \rightarrow_{DM}\: env'_M}{env_V \vdash \langle func\ f(e_1\: ,\ ...\: ,\ e_n)\ begin\ B\ end\ D_M \ env_M \rangle \rightarrow_{DM}\: env'_M}\) } \vspace{0.1pt} \\ \hline 
+\vspace {0.1pt} & \\  
+
+Empty-FUNC-Dcl        &   \hbox{\Large \(env_V\, \vdash \langle \varepsilon\: ,\ env_F \rangle \rightarrow_{DF}\: env_F\) } \vspace{0.1pt} \\ \hline 
+\vspace {0.1pt} & \\  
+
+Func-Call  & \pbox{20cm}{\large \(env'_V\: ,\ env_M\, \vdash \langle B\: ,\ sto'' \rangle \rightarrow sto'\) \\ \huge \(\frac{env_M\, \vdash \langle PList\: ,\ sto\: ,\ env_V \rangle \rightarrow_{PList}(sto''\: ,\ env'_V)}{env\, \vdash \langle f(Plist)\: ,\ sto)\rightarrow sto'}\) \normalsize \\ \\ \(\textbf{Where} \quad PList \in \{x_1\: ,\ ...\: ,\ x_n\} \) } \vspace{0.1pt}  \\ \hline
+
+        \end{tabular}
+    \end{adjustbox}
+    
+    \caption{Functions call and declaration}
+    \label{fig:Func}
+\end{table}
+
+
+\begin{table}[H]
+    \begin{adjustbox}{center}
+        \begin{tabular}{|c|c|}
+        \hline
+\vspace {0.1pt} &\\
+EMPTY & \hbox{\Large \(env_V\: ,\ env_C\, \vdash \langle \varepsilon\: ,\ \varepsilon\: ,\ env_V\: ,\ sto \rangle \rightarrow (env_V\: ,\ sto)\)}\vspace{0.1pt} \\ \hline 
+\vspace {0.1pt} & \\
+ByRef & \pbox{20cm}{\huge \(\frac{\langle PList\: ,\ AList\: ,\ env''_V\: ,\ sto \rangle \rightarrow (env'_V\: ,\ sto')}{env_C\: ,\ env_C\, \vdash \langle y\ PList\: ,\ x\ AList\: ,\ env_V\: ,\ sto \rangle \rightarrow (env'_V\: ,\ sto')}\) \normalsize \\ \\ \(\textbf{Where} \begin{aligned} env_V[x\, \mapsto e] = env''_V \\ env_V(y) = e \end{aligned}\)} \vspace{0.1pt} \\ \hline 
+\vspace {0.1pt} & \\
+ByVal & \pbox{20cm}{\huge \(\frac{\langle PList\: ,\ AList\: ,\ env''_V\: ,\ sto'' \rangle \rightarrow (env'_V\: ,\ sto')}{env_V\: ,\ env_C\, \vdash \langle e\ PList\: ,\ x\ AList\: ,\ env_V\: ,\ sto \rangle \rightarrow (env'_V\: ,\ sto')}\) \normalsize \\ \\ \(\textbf{Where} \begin{aligned} env_V\, \vdash \langle e\: ,\ sto \rangle \rightarrow_e\: (v\: ,\ sto'') \\ env''_V = env_V[x\, \mapsto l][next\, \mapsto new\ l] \\ l = new(env_V\ next) \\ sto'' = sto[l \rightarrow v] \end{aligned} \)} \vspace{0.1pt} \\ \hline 
+       
+        \end{tabular}
+    \end{adjustbox}
+    
+    \caption{PList Semantics}
+    \label{fig:Plist}
+\end{table}
+
+In \lang{}, functions and a class constructor can take a set of defined parameters. These can both be by value and by reference. These is defined by PList. Their big-step semantics are defined in table \ref{fig:Plist}. The first rule, EMPTY, is called when the current parameter does not exist. Here, empty is returned. The Plist byRef starts with the \(env''_V\), as it is recursive, so there are possible information from earlier that needs to be taken into consideration. It saves the new information in the \(env'_V\) and \(sto'\), where the location of y is stored and passed on. The ByVal takes the value from the e that is in the \(env_V\) and stores the value from it in \(sto''\). Afterwards, it makes a new variable x that has a new location assigned to it, where it stores the value v.
+
+
+\begin{table}[H]
+    \begin{adjustbox}{center}
+        \begin{tabular}{|c|c|}
+        \hline
+\vspace {0.1pt} &\\
+Class-Dcl        &   \pbox{20cm}{\huge \(\frac{env_{VM}\, \vdash \langle P\: ,\ env''_C \rangle \rightarrow_{DC}\: env'_C}{env_{VM}\, \vdash \langle class\ c\ is\ c'\ begin\ D_V\ D_M\ end\ P\: ,\ env_C \rangle \rightarrow_{DC}\: env_C}\) \\ \\ \\ \normalsize \(\textbf{Where} \begin{aligned} env_C(c') = (env''_V\: ,\ env''_M) \\ env_C\, \vdash \langle D_V\: ,\ env''_V \rangle \rightarrow_{DV}\: env'_V \\ env'_V\, \vdash \langle D_M\: ,\ env''_M \rangle \rightarrow_{DM}\: env_M' \\ env''_C = env_C [c\, \mapsto(env_V'\: ,\ env_M')] \end{aligned} \)} \vspace{0.1pt} \\ \hline 
+\vspace {0.1pt} & \\  
+
+Class-instantiation &   \pbox{20cm}{\Large \(env''_V\: ,\ env_C\, \vdash \langle B\: ,\ sto''\: ,\ Heap \rangle \rightarrow (sto'\: ,\ Heap'')\) \\ \huge \(\frac{env_V\, ,\ env_C\, \vdash \langle PList\: ,\ AList\: ,\ env'_V\: ,\ sto \rangle \rightarrow (env''_V\: ,\ sto'')}{env_V\: ,\ env_C\, \vdash \langle set\ y\ to\ new\ c(PList)\: ,\ sto\: ,\ Heap \rangle \rightarrow (sto'\: ,\ Heap')}\) \\ \\ \\ \normalsize \(\textbf{Where} \begin{aligned} Heap' = Heap''[y\, \mapsto (env''_V\: ,\ sto\: ,\ Heap'')] \\ env_C(c) = (env'_V\: ,\ env_M) \\ env_M(OnConstruct) = (B\: ,\ AList\: ,\ env'_V) \end{aligned}\)} \vspace{0.1pt} \\ \hline
+%Class-instantiation &   \pbox{20cm}{\Large \(env_C\, \vdash \langle D_V\: ,\ env_V\: ,\ sto \rangle \rightarrow (env''_V\: ,\ sto'')\) \\ \(env''_V\: ,\ env^1_C\, \vdash \langle D_M\: ,\ env^1_M \rangle \rightarrow env''_M\)\huge \\ \(\frac{env''_C\, \vdash \langle D_C\: ,\ envC[c\, \mapsto l]\: ,\ sto'''' \rangle \rightarrow \langle env'_V\: ,\ sto' \rangle}{env_C\, \vdash \langle set\ y\ to\ new\ c(Plist) \: ,\ env_C\: ,\ sto \rangle \rightarrow (env'_C\: ,\ sto')}\) \\ \\ \\ \normalsize \( \textbf{Where}\begin{aligned} env_C\ c = (B\: ,\ env_V\: ,\ env_M\: ,\ env_C) \\ l = sto'''\ next \\ sto'''' = sto'''[l \mapsto env''_V\: ,\ env''_M\: ,\ env''_C][next \mapsto new\ l] \end{aligned}\)} \vspace{0.1pt} \\ \hline 
+
+
+    \end{tabular}
+    \end{adjustbox}
+    
+    \caption{Caption}
+    \label{fig:TrakhjnnyRulesProc}
+\end{table}
+    
+
+When \lang{} returns a primitive value, the value is placed in a specific location, where it is retrievable after the function call. This location is called \textbf{retVar}, which is defined as: \(\textbf{retVar} = \textbf{Loc}\).
+
+\begin{table}[H]
+    \begin{adjustbox}{center}
+        \begin{tabular}{|c|c|c|}
+        \hline
+\vspace {0.1pt} &\\
+Assignment      &   \pbox{20cm}{\Large \(env_{VM}\, \vdash \langle set\ x\ to\ e\: ,\ sto \rangle \rightarrow sto'[l \mapsto v] \quad\)\\ \\ \( \textbf{where}\ \begin{aligned} env_{VM}\, \vdash \langle e\: ,\ sto \rangle \rightarrow \: (v\: ,\ sto') \\ l = env_V\ x \end{aligned} \) } \vspace{0.1pt} \\ \hline 
+\vspace {0.1pt} & \\
+
+Block       &   \pbox{20cm}{\Large \( \langle D_V\: ,\ env_V \rangle \rightarrow_{DV} env'_V \) \\ \huge \(\frac{env'_V\: ,\ env_M\, \vdash \langle S\: ,\ sto \rangle \rightarrow sto'}{env_{VM}\, \vdash \langle \{D_V\ S \}\: ,\ sto \rangle \rightarrow sto'} \) } \vspace{0.1pt} \\ \hline 
+\vspace {0.1pt} & \\
+Skip       &   \pbox{20cm}{\Large \( env_{VM}\, \vdash \langle skip\: ,\ sto \rangle \rightarrow sto \) } \vspace{0.1pt} \\ \hline 
+\vspace {0.1pt} & \\
+
+Composite       &   \pbox{20cm}{\Large \(env_{VM}\, \vdash \langle S_1\: ,\ sto \rangle \rightarrow sto''\) \\ \huge \(\frac{env_{VM}\, \vdash \langle S_2\: ,\ sto'' \rangle \rightarrow sto'}{env_{VM}\, \vdash \langle S_1\ S_2\: ,\ sto \rangle \rightarrow sto'}\) } \vspace{0.1pt} \\ \hline 
+\vspace {0.1pt} & \\
+
+Return Primitive          & \hbox{\huge \(\frac{env_{VM}\, \vdash \langle x\: ,\ retVar\: ,\ sto \rangle \rightarrow\: retVar'\: ,\ sto}{env_V\, \vdash \langle return\: x,\ env_V\: ,\ sto \rangle \rightarrow\: retVar'\: ,\ env_V\ sto}\) } \vspace{0.1pt}  \\ \hline
+\vspace {0.1pt} & \\
+
+Return Reference      & \hbox{\huge \(\frac{env_{VM}\, \vdash \langle y\: ,\ sto \rangle \rightarrow\: sto'}{env_V\, \vdash \langle return\: y,\ env_V\: ,\ sto \rangle \rightarrow\:  env_V'\ sto'}\) } \vspace{0.1pt}  \\ \hline
+
+        \end{tabular}
+    \end{adjustbox}
+    \caption{Caption}
+    \label{fig:hgf}
+\end{table}
+
+\begin{table}[H]
+    \begin{adjustbox}{center}
+        \begin{tabular}{|c|c|c|}
+        \hline
+\vspace {0.1pt} &\\
+Program1      &   \pbox{20cm}{\Large \(env_V\, \vdash \langle D_V\: ,\ env_V\: ,\ sto \rangle \rightarrow (env''_V\: ,\ sto') \)\huge \\ \(\frac{env''_{VMC}\, \vdash \langle M_C\: ,\ env_C \rangle \rightarrow env'_C }{env_{VMC}\, \vdash \langle D_V\: ,\ M_C\: ,\ sto \rangle \rightarrow sto'} \) } \vspace{0.1pt} \\ \hline 
+\vspace {0.1pt} & \\
+Program2     &   \pbox{20cm}{\huge  \(\frac{env_{VMC}\, \vdash \langle D_C\: ,\ env_C \rangle \rightarrow env'_C }{env_{VMC}\, \vdash \langle D_C P\: ,\ sto \rangle \rightarrow sto'} \) } \vspace{0.1pt} \\ \hline 
+
+        \end{tabular}
+    \end{adjustbox}
+    
+    \caption{Program}
+    \label{fig:progstuff}
+\end{table}

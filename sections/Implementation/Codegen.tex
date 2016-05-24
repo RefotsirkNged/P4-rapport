@@ -1,0 +1,190 @@
+\section{Code Generation phase}
+The last phase of the compiler is the code-generation phase. In this phase, code is generated for the target language, which, in the case of \lang{}, is Java. The code generation is done using the AST produced by the previous compiler phases, and using the Sable-CC tree-walking method similarly as done in the previous phases. The code that calls the JavaCodeGenerator class to begin code generation for java is implemented as seen on figure \ref{fig:startcodegen}.
+
+\begin{figure}[H]
+    \centering
+    
+    \begin{lstlisting}[style=gglang]
+            new JavaCodeGenerator(typeChecker.typeTable, typeChecker.superTable, tree);
+            AntExecutor AEx = new AntExecutor();
+            AEx.executeAntTask("CompileBFGL.xml", "jar");
+    \end{lstlisting}
+    \caption{The code for calling the class responsible for starting code generation.\label{fig:startcodegen}}
+\end{figure}
+The last two lines are not directly responsible for generating java code, but they execute the rest of the build process. This includes moving library-files to the right positions, calling the java compiler to compile the generated java code to .class files, and finally creating an executable .jar file with the compiled game contained inside.
+
+\subsection{Code Generation for Java}
+To accommodate the different needs of an object-oriented language, six different visitors were created based on the depth-first adapter from Sable-CC.
+This uses the \textit{in} and \textit{out} functions, just like the semantic analysis did in the last section, as shown on \ref{fig:inout}.
+
+
+\subsubsection{JavaCodeGenerator}
+An instance of this class is created at the beginning of the codegen phase. The first thing it does is to add in some of the libraries contained in the Libraries folder, which is implemented as seen on figure \ref{fig:librarycodegen}.
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+        addLibrary("Scene", "Scene");
+
+        node.apply(new TopVisitor(typeTable, superTable));
+
+        addLibrary("Main", "Main");
+        addLibrary("MathBFGL", "MathBFGL");
+    \end{lstlisting}
+    \caption{Libraries are added \label{fig:librarycodegen}}
+\end{figure}
+The "addLibrary" method looks in the libraries folder and tries to import a library file according to what parameters were given. "Scene" is added before "Main" and "MathBFGL", because it contains some variables that have to be available before the TopVisitor runs.
+These libraries contain setup code, that makes the Slick library work with the game, written in java. After having input these basic files into the compilation target folder, it calls Topvisitor to begin the rest of the code-generation. The Slick library contains a set of APIs used in the generated code, such as input handling, rendering/drawing, and basic collision detection. The setup done by the libraries, imported with JavaCodeGenerator, abstracts away a lot of the general setup that has to be done when making a game, which helps to simplify the code-generation process, as the whole feature set of the Slick library does not have to be reimplemented. This also enhances the reliability of the language and the games produced by it since the APIs of Slick have been extensively tested.
+
+\subsubsection{TopVisitor}
+Topvisitor is the first actual visitor to be applied to the AST in the code-generation phase. As the name suggests, it visits the different topmost level of the AST, namely the entry point of the game, the different classes, and the main method of the BFGL input file. This main is different from the java main-file, as the content of this main is input into the Slick version of an initialising constructor for the game to set up whatever, the user might want to set up, before the game starts running. 
+In order for the Java files to work and compile properly, without having to write a complex function to determine what namespaces might be needed, any new class just has all the possible namespaces, it could need, added in per default. The implementation of this method for importing namespaces is just a list of all the namespaces that is used with the \lang{} specification, see figure \ref{fig:javaimport}.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    protected void AddNameSpaces() {
+        emitnl("import java.lang.*;");
+        emitnl("import java.util.*;");
+        emitnl("import java.io.*;");
+        emitnl("import java.text.*;");
+        emitnl("import java.awt.*;");
+        emitnl("import java.nio.*;");
+        emitnl("import java.math.*;");
+        emitnl("import org.newdawn.slick.*;");
+    }
+    
+    \end{lstlisting}
+    \caption{Java library import}\label{fig:javaimport}
+\end{figure}
+
+This is of course not very efficient, but efficiency is not the main goal of \lang{}, as long as the games runs at a reasonable FPS(frames per second).
+TopVisitor also imports all the global variables declared in the \lang{} file, and puts them in a class called Global, to facilitate calling them wherever it might be needed. The implementation of this is a simple copy from one file to another. 
+TopVisitor has "in"  methods for both "prog", the entrypoint of a game, main, the main class in the \lang{} file, and for class, which corresponds to all the classes defined in the \lang{} file. 
+The class "in" node method contains logic for adding in a lot of static libraries used by the language - most of which are simple wrapper-classes that call corresponding Java or Slick methods. This is necessary to make the classes available at compile time. Otherwise, the \lang{} compiler would throw exceptions and the compilation would fail. An example from one of the wrapper classes that are used, can be found on figure \ref{fig:wrapperClass}.
+
+\begin{figure}[H]
+\centering
+    \begin{lstlisting}[style=gglang]
+    dcl func roundDown(num numToBeRounded) begin
+        return 0
+    end
+
+    dcl func round(num numToBeRounded) begin
+        return 0
+    end
+
+    dcl func sqrt(num numToSqr) begin
+        return 0
+    end
+
+    dcl func pwr(num howMuchToPower) begin
+        return 0
+    end
+
+    dcl func getRandomNum(num upperBound) begin
+        return 0
+    end
+    \end{lstlisting}
+    \caption{Example of wrapper class used for mathematical funtions}\label{fig:wrapperClass}
+\end{figure}
+These functions are never a target for code generation. They are simply in the compilation process to make the functions available during the semantic analysis phase, after which they are replaced by one of the static libraries.
+
+\subsubsection{ClassBodyVisitor and FuncBodyVisitor}
+The purpose of these two classes is to visit the bodies of functions and classes, and emit corresponding Java code. These are made in two distinct classes instead of one, as they are logically distinct. A function-body can contain any amount of statements, while a class-body can contain a wider range of things, which has to be printed differently. An example from ClassBodyVisitor, of how a list is handled, is seen on figure \ref{fig:inAListPdcl}.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+     public void inAListPdcl(AListPdcl node) {
+        if (!node.visited) {
+            node.visited = true;
+            emitnl("ArrayList<" + "_" + node.getType().toString().trim() + "> " + "_" + node.getId().getText() + " = new ArrayList<>();");
+
+        }
+    }
+    \end{lstlisting}
+    \caption{Example from ClassBodyVisitor}\label{fig:inAListPdcl}
+\end{figure}
+
+
+\subsubsection{ExpressionVisitor}
+ExpressionVisitor visits all the different expression nodes, and emits the corresponding operators.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    public void inAMinusExpr(AMinusExpr node) {
+        if (!node.visited) {
+            node.getLeft().apply(this);
+            emit(" - ");
+            node.getRight().apply(this);
+            node.visited = true;
+        }
+
+
+    }
+    \end{lstlisting}
+    \caption{Examples of how the ExpressionVisitor corresponds to the semantics of \lang{}}\label{fig:inAMinusExpr}
+\end{figure}
+
+As is seen in figure \ref{fig:inAMinusExpr} example, when evaluating a minus expression, the left node will be evaluated, after which the symbol "-" will be added. Lastly, the right node is evaluated. As this is translated to Java, which will evaluate this from left to right, it ensures that the expression is evaluated in the correct order. 
+
+\subsubsection{For loops}
+For loops in \lang{} are implemented differently than most languages. They use two distinct syntaxes for loops going from a high value to a low value, or vice versa. This is specified by writing either "for x upto y do" or "for x downto y do". This is analysed and turned into Java code as seen on figure \ref{fig:downtobfgl}.
+
+\begin{figure}[H]
+\centering
+    \begin{lstlisting}[style=gglang]
+    for x downto 0 do
+        set y to y + 1
+    end
+    \end{lstlisting}
+    \caption{\lang{} down to}\label{fig:downtobfgl}
+\end{figure}
+Is turned into the code seen on figure \ref{fig:downtojava} when compiled using the \lang{} compiler.
+\begin{figure}[H]
+\centering
+    \begin{lstlisting}[style=gglang]
+    float _exprvalx = 0f;
+    for(_x = _x ; _x >= _exprvalx ; _x--){
+        _y = _y + 1f;
+    }
+    \end{lstlisting}
+    \caption{Java translation of down to}\label{fig:downtojava}
+\end{figure}
+
+A thing to note is that the value to be repeated down to is evaluated once, and then stored in a variable called \_exprvalx. This is done to make the loop behave in correspondence with the semantics for for loops, as specified in the Semantics chapter \ref{fig:ControlBlock}.
+
+\subsubsection*{Order of evaluation}
+Evaluation order in \lang{} follows normal, sequential evaluation order, as seen in the example in figure \ref{fig:ecaluationorder}.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}
+    dcl num n to 0
+    dcl num out
+    dcl func f() begin
+        set n to n + 1
+        return 1
+    end
+    dcl func g() begin
+        set n to n * 2
+        return 1
+    end
+
+    dcl func result() begin
+        set n to 0
+        set out to f() + g()
+        dcl Label l to new Label("" + n, 100, 100) // expected: 2
+        set n to 0
+        set out to g() + f()
+        dcl Label l1 to new Label("" + n, 100, 120) // expected: 1
+    end
+    \end{lstlisting}
+    \caption{The evaluation order of functions in \lang{}}\label{fig:ecaluationorder}
+\end{figure}
+
+When "out" is set to \textit{f + g}, \textit{f} will be evaluated first, and then \textit{g}. Other cases of this was tested and verified, as described in the \ref{Test} chapter.
+
+\subsubsection{DisableVisitor}
+This visitor disables nodes after they have been visited. This is used in the code generation for class calls to prevent the same classes being written to the compiler output multiple times. A class call is a normal "something.someclass.somemethod" call, but if it was visited as it normally would, it would print out the classes multiple times. This is prevented by DisableVisitor by setting a boolean named "visited" to true. 

@@ -1,0 +1,129 @@
+\section{Mini Tutorial}
+This is a mini tutorial of how \lang{} is used and how the user can develop a small videogame using it. 
+\todo{omskriv oversigt}% First, the variable and the some of the class are used in the next section and in the end how you can use this to make a game \ref{sec:miniGame}
+
+\subsection{Main}
+The starting point of a videogame in \lang{} is the class called \textit{Main}. The main class is executed top-down. The \textit{Main} class must be the first class to be declared.
+
+
+\begin{figure}[H]
+    \centering
+    
+    \begin{lstlisting}[style=gglang]
+    dcl text globaltext                     /* Example of the declaration of a global variable. */
+    Main begin                              /* The start of the program                 */
+        dcl text someVariable               /* Declaration of a variable                */
+                                            /* The construct, which only runs once      */
+        set someVariable to "Some Text"     /* A variable is set to a value             */
+    end                                     /* End of the Main class                    */
+    \end{lstlisting}
+    \caption{Use of the \textit{Main} Class\label{fig:main}}
+\end{figure}
+
+Figure \ref{fig:main} shows how to implement the main class.
+
+\subsubsection{Global variable}
+Global variables are defined before the \textit{Main} class. These variables are accessible everywhere in the program, except where they are defined, which is right before the declaration of main. An example of global variables can be seen in \ref{fig:main}
+
+\subsection{Sprite}
+To get an object drawn on the screen, a new instance of a defined player object must be instantiated. To be able to move the player object on the screen, it will need some variables, namely a variable vector for direction and a num for speed. Furthermore, it is needed to inherit from the abstract class \textit{Sprite}, since the \textit{Sprite} class implements the following properties: \textit{position}, \textit{velocity}, \textit{texture}, a \textit{tag} used to recognise the object, \textit{boundaries} used for collision and some functions, such as \textit{kill()}, which removes the object from the screen.
+
+\begin{figure}[H]
+    \centering
+    
+    \begin{lstlisting}[style=gglang]
+    Main begin
+        dcl Player player
+        dcl Vector dir
+        dcl num speed
+        
+        set player to new Player()
+        set dir to new Vector(1,0)
+        set speed to 10
+        Game.sprites.add(player)    /* Player is added to the list of active game elements  */
+                                    /* Objects in this list will be drawn to the screen     */
+                                    /* Relative to the velocity given below                 */
+        player.velocity.Set(dir*speed)
+    end
+    
+    class Player is Sprite begin
+        OnConstruct() do 
+            base(new Vector(20, Game.height /2), "/Textures/player.png")
+                                    /* this is the base constructor from the sprite,        */
+                                    /* this takes a point for its position and a texture.   */
+        end
+    end
+    \end{lstlisting}
+    \caption{simple right movement program, using \textit{Sprite}\label{fig:sprite}}
+\end{figure}
+
+An example of how to implement movement, using the \textit{Sprite} class is given on figure \ref{fig:sprite}.
+
+\subsection{Events}
+In \lang{}, there exist only four events:
+\begin{itemize}
+    \item OnConstruct
+    \item OnCollision
+    \item OnUpdate
+    \item OnInput
+\end{itemize}
+
+Any class can only define each of the events once, as seen in \ref{fig:collision} line 2. These are specific abstractions over central elements in game-creation, specified as events to greatly simplify the process for the programmer.
+\subsubsection{Collision}
+To handle collision, the event handler \textit{OnCollision} is used. It gives an object of type \textit{Sprite}, i.e an object that inherits from sprite, as a parameter that follows the event.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    OnCollision(Sprite other) do
+        set vect to GetCenter()
+        set vect to vect.DirVector(other.GetCenter())
+        vect.Normalise()
+        set speed to speed+10
+    end
+    \end{lstlisting}
+    \caption{OnCollision from Ball\label{fig:collision}}
+\end{figure}
+An implementation of the \textit{OnConstruct} event handler is shown on figure \ref{fig:collision}.
+
+\subsubsection{Input}
+The OnInput event handler is called each time the program gets input. This can be from both a mouse or keyboard.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    class Player is Sprite begin                     
+        dcl num speed                               
+        
+        OnConstruct() do
+            base(new Vector(20, Game.height /2), "/Textures/player.png")
+            set speed to 10
+        end
+        
+        OnInput(input) do                   /* Input is the key events */
+            if input.KeyPressed(key.d) do   /* KeyPressed is a function that takes a key as input */
+                                            /* and returns a bool, indicating if the key has been pressed */
+                velocity.SetX(speed)             
+            
+            else if input.KeyPressed(key.a) do
+                velocity.SetX(-speed)
+            end
+            
+            if input.KeyPressed(key.w) do
+                 velocity.SetY(-speed)
+            
+            else if input.KeyPressed(key.s) do
+                velocity.SetY(speed)
+            end                             /* In this OnInput, the Player object is moved in */ 
+        end                                 /* the direction of the user's choosing */
+    end
+    \end{lstlisting}
+    \caption{User control movement\label{fig:input}}
+\end{figure}
+
+An example of how to implement an \textit{input} handler in \lang{}, is seen on figure \ref{fig:input}.
+
+\subsection{Mini Game}
+\label{sec:miniGame}
+
+A fully working version of ping pong written in \lang{} can be seen at \ref{code:minigame}. It has three classes \textit{Ball, Player and Enemy}. It uses all the things learned from this chapter and makes them into a complete game.

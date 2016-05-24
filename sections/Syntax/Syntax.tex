@@ -1,0 +1,14 @@
+\chapter{Syntax}
+\label{chap:BFGLSyntax}
+This chapter describes the different kinds of parser generators and analyses what features they have, to be able to make a conclusion for which one is the most suitable for this project. Afterwards, the EBNF description of \lang{} is presented.
+\input{sections/Syntax/ParserGenerators.tex}
+
+\section{EBNF notation in SableCC}
+\label{sec:EBNFinSable}
+In parser generators like SableCC, the syntax definition is split into several parts. The first part is a token definition section, and following it is a syntax definition, written as a Context-free Grammar (CFG).
+
+In SableCC, the regular expressions that makes up the token definition and the Context-free Grammar (CFG) are written in the same file. The token definition and the syntax are however logically distinct. The token definition is used in the scanner/lexer part of the compiler, and the CFG/syntax is used in the parser.
+
+The initial non-terminal symbol is always the firstly defined production specified in the SableCC grammar file. 
+
+\input{sections/Syntax/OurSyntax.tex}

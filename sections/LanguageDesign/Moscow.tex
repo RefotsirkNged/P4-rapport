@@ -1,0 +1,85 @@
+\section{MoSCoW}
+For this section, the different requirements of the \lang{} language have been found through analysis. These requirements have been prioritized following the MoSCoW method. This method is explained in \ref{subsec:moscowmethod}, after which the results of the analysis are presented and explained.
+
+\subsection{MoSCoW method}
+\label{subsec:moscowmethod}
+When designing a project with limited resources, be they time or money, it is important to be able to prioritise parts of the project in a structured manner. The MoSCoW method can help to attain this by prioritizing all parts, or in this case features, of the language into four categories, namely: must-have, should-have, could-have and would-have \citep{MOWSCOW}.
+
+
+\subsection{MoSCoW results}
+The results of the MoSCow analysis can be seen on table \ref{tab:Moscow}, after which the different features are explained.
+
+\input{Table/MoscowTable.tex}
+
+Starting from Must have and moving down towards Would have.
+
+\Large \textbf{Must have features:} \normalsize \vspace{-7mm}
+\subsubsection*{Primitive types}
+Primitive types include num and boolean values. Booleans are necessary for many of the control structures that are found in most modern programming languages. The num type, or numbers, are needed since it is essential to be able to assign a numeric value to different properties in the game. This can be setting the coordinates of an object on the game screen. Num also allows the user to do arithmetic operations. 
+
+\subsubsection*{Functions}
+Functions is a must-have for the \lang{} language, since it lies at the root of most programming and is a fundamental tool for teaching abstract reasoning. These can not be excluded, since the purpose of \lang{} is to teach programming.
+
+\subsubsection*{For and while loop}
+To be able to write iterative programs and not only recursive or linear, the language must implement some sort of loop. In the \lang{} language, these loops are the \textit{for} and \textit{while} loops, since these are the most common in modern programming. Furthermore, \lang{} does not allow recursive calls.
+
+\subsubsection*{Conditional statements}
+Conditional statements, here under \textit{if} and \textit{else} statements, allow a program to branch depending on the value of a boolean expression. This is essential for a language for it to be able to do conditional branching, depending on the input.
+
+\subsubsection*{Arithmetic operations}
+Arithmetic operations are some of the most essential parts of programming. These are for obvious reasons a must-have. Furthermore, they are also essential for computing coordinates and other video game related data.
+
+\subsubsection*{Boolean expression}
+Boolean expressions are needed to be able to write conditional statements. These expressions are necessary to have if the conditional statements of the language are to be useful at all, so these are must-have.
+
+\subsubsection*{Objects and classes}
+Objects and classes are a must-have, since one of the goals of the \lang{} language is to teach people about object oriented programming \ref{sec:problemstatement}. Objects and classes are at the core of object oriented programming.
+
+\subsubsection*{Inheritance}
+Inheritance is an essential feature of object-oriented programming. Since \lang{} is an object-oriented programming language, inheritance is a must-have.
+
+\subsubsection*{Graphics}
+Since \lang{} is a domain specific language for making simple video games for beginner programmers \ref{sec:problemstatement}, it must add an abstraction layer over graphics drawing.
+
+\subsubsection*{Event handling}
+To make the different objects in the game able to react to things happening in the game environment, such as when the game updates, it is necessary to have an event handling system. This is again needed as a core part of \lang{}, since the language is domain specific \ref{sec:problemstatement}.
+\\ \\ \\
+\Large \textbf{Should-have features:} \normalsize \vspace{-7mm}
+\subsubsection*{Collision detection}
+For game objects to interact with each other, the program must be able to detect collisions. This is an essential part of a video game, but it is not a must-have for the language, since the user still can learn about programming without them, by drawing to and moving objects on the screen.
+
+\subsubsection*{Vector type}
+Vectors are useful when the user wants to implement simple physics like an object that bounces of a wall, as they can be used to, among others, emulate forces such as gravity.
+
+\subsubsection*{Comments}
+Comments adds increased readability, as they are used to explain code that is otherwise hard to read. Comments should be a part of the language, but is not a must have.
+
+\subsubsection*{List type}
+List types are not inherently needed for making simple games, and as such, they are not a must-have. They are, however, needed for games with multiple instances of, for example, entities such as enemies, food, players etc.
+
+\subsubsection*{Abstract sprite}
+To make abstract over graphics drawing, collision and game objects, an abstract sprite is discussed to be defined in the language. This class includes important elements used when making sprites. Even though this should be in the language, it is not the first priority, and is therefore a should-have.
+\\ \\ \\
+\Large \textbf{Could-have features:} \normalsize \vspace{-7mm}
+\subsubsection*{IDE}
+An IDE would help a user to write programs, as it would give the user tips and inform if something is wrong before the code is compiled. Even though it is an advantage to implement, it is not required for the language to work. Therefore, it is a could-have.
+
+\subsubsection*{Mathematical functions}
+Even though it would help a lot to have mathematical functions, most mathematical functions can be made with features mentioned in the must-have list. Therefore these are only a could-have.
+\\ \\ \\
+\Large \textbf{Would-have features:} \normalsize \vspace{-7mm}
+
+\subsubsection*{Exception handling}
+When an exception happens in \lang{}, it will describe the reasoning for it, so the user can fix it. These can be solved using other features. Therefore, exception handling is not important and is a would-have.
+
+\subsubsection*{Primitive shapes}
+While it is nice to be able to make a shape, it is not needed, as these can be made with objects. Therefore, primitive shapes are would-have.
+
+\subsubsection*{Interfaces}
+Interfaces are not a requirement, as they are out of the scope of this project. They could allow the user to create custom events and event handlers. Interfaces are therefore only a would-have.
+
+\subsubsection*{Import of libraries}
+The libraries needed for making games are already implemented in \lang{}, so the ability to import libraries is therefore a would-have. Implementing the ability to implement custom libraries is however not within the scope of this project, and therefore it will not be implemented.
+
+
+With the results of the MoSCoW analysis, an informal specification of \lang{} is presented in the following section. This is done to concretise the language design.

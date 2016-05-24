@@ -1,0 +1,131 @@
+dcl num score1 to 0
+dcl num score2 to 0
+dcl Ball ball to new Ball()
+
+Main begin
+    dcl Player player to new Player()
+    dcl Enemy enemy to new Enemy()
+
+    dcl num h to 1
+    for h upto 2 do
+        set ball to new Ball()
+    end
+
+    game.SetBackground("Resources/arena.png")
+end
+
+class Player is Sprite begin
+    dcl num speed
+    dcl num vel
+
+    dcl Label p1 to new Label("Player 1 : " + score1, 100, 100)
+
+    OnConstruct() do
+        base(10, 200, 100, 150, "Player")
+        set speed to 200
+        set texture to "Resources/redfighter0006.png"
+        game.Sprites.add(this)
+    end
+
+    OnUpdate(num delta) do
+        if input.key.W.isDown then
+             set vel to -speed
+        else if input.key.S.isDown then
+             set vel to speed
+        else
+            set vel to 0
+        end
+        set posY to posY+vel * (delta / 1000)
+
+        if posY < ball.posY then                /* Use the reference obtained earlier, to move the enemy accordingly */
+              set vel to speed
+
+            else if posY > ball.posY then
+              set vel to -speed
+        end
+        set posY to posY+vel  * (delta / 1000)
+
+        p1.updateText("Player 1 : " + score1)
+    end
+end
+
+class Enemy is Sprite begin
+  dcl num speed to 100
+  dcl num vel
+  dcl Label p2 to new Label("Player 2 : " + score2, 400, 100)
+
+  OnConstruct() do
+    base(600, 100, 20, 150, "Enemy")
+    game.Sprites.add(this)
+  end
+
+  OnUpdate(num delta) do                           /* A event as explained in the previous section       */
+    if posY < ball.posY then                /* Use the reference obtained earlier, to move the enemy accordingly */
+      set vel to speed
+
+    else if posY > ball.posY then
+      set vel to -speed
+    end
+    set posY to posY+vel  * (delta / 1000)
+    p2.updateText("Player 2 : " + score2)
+  end
+
+
+
+end
+
+class Ball is Sprite begin
+  dcl num speed
+  dcl num yspeed
+  dcl num xspeed
+  dcl num dir
+
+
+  OnConstruct() do
+    base(200, 200, 20,20, "Ball")
+    set texture to "Resources/pokeball.png"
+
+    set speed to 300
+    set xspeed to speed
+    game.Sprites.add(this)
+  end
+
+  OnCollision(Sprite other) do
+        if not (other.id = "Ball") then
+            set xspeed to -xspeed
+            set dir to math.getRandomNum(200) + 50
+
+            if dir = 1 then
+                set yspeed to dir
+            else
+                set yspeed to -dir
+            end
+        end
+
+  end
+
+  OnUpdate(num delta) do
+
+
+    if posY <= 0 then
+       set yspeed to -yspeed
+    else if posY >= 480 then
+       set yspeed to -yspeed
+    end
+
+    if posX <= 0 then
+        set score2 to score2 + 1
+        set posX to 320
+    end
+
+    if posX >= 640 then
+        set score1 to score1 + 1
+        set posX to 320
+    end
+
+    set posY to posY + yspeed * (delta / 1000)
+    set posX to posX + xspeed * (delta / 1000)
+
+
+  end
+end

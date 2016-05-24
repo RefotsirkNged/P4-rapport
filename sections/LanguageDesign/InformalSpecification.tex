@@ -1,0 +1,291 @@
+\section{Informal Specification of \lang{}}
+\label{sec:InformalSpecification}
+In this section, the \lang{} language is described informally, this is done to gain a better understanding of the different design decisions taken in the design of the language. 
+
+Following this section, there is a small tutorial of how to use \lang{} to develop a small video game, which builds upon the fundamentals of this section.
+
+This will all lead to the formal specification of \lang{}, found in chapter \ref{chap:BFGLSyntax} and \ref{chap:semantics}.
+
+\subsection{Control flow}
+\textbf{If/if else:}
+Conditional statement that will evaluate true, depending on what input is given. It can chain conditional statements together infinitely, through the use of "else if".
+Usage:
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    if x = y then
+        if y = 0 then
+            /*do something*/
+        else if x = 6 then
+            /*do something*/
+        end
+    else
+        /*do something*/
+    end
+\end{lstlisting}
+    \caption{Example of if else chaining in \lang{}}\label{fig:ifelse}
+\end{figure}
+
+\textbf{For loop:} 
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    dcl num i to 0
+    
+    for i upto 100 do
+	    /*do something*/
+    end
+
+    set i to 100
+
+    for i downto 0 do
+	    /*do something*/
+    end
+\end{lstlisting}
+    \caption{Example of two for loops, one counting from 0 to 100 and one from 100 to 0 in \lang{}}\label{fig:forloop}
+\end{figure}
+For loops will automatically count up or down with the keywords upto or downto respectfully. It counts until the variable hits or exceeds the chosen end point.
+
+\textbf{While loop:}
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    while x > 0 do
+	    /*do something*/
+    end
+\end{lstlisting}
+    \caption{Example of a while loop in \lang{}}\label{fig:whileloop}
+\end{figure}
+
+The while loop runs as long as the boolean expression is true. The expression is evaluated on every iteration.
+
+\subsection{Variables}
+In \lang{} variables can be divided into two categories: Primitive variables and reference variables.
+
+In the language \lang{}, all primitive variables are instantiated to a standard value when declared. This is done to make it impossible for the user to make use of an unassigned variable. The default values for the different variable types were chosen by the criteria that they be as intuitive as possible. These values can be found on figure \ref{fig:defaultdcl}
+
+\subsubsection{Primitive variables}
+These include:
+\begin{itemize}
+    \item num - Float.
+    \item bool - Boolean value, either true or false.
+\end{itemize}
+
+\subsubsection{Reference variables}
+These include:
+\begin{itemize}
+    \item text - string.
+    \item list - A list of objects. 
+    \item objects - An instantiation of a class.
+\end{itemize}
+
+\subsubsection{Declaration}
+In \lang{} two forms of declaration are possible: Normal declaration and assignment declaration. Assignment declaration both declares and assigns the variable. The normal declaration assigns the variable to a default values that can be seen on fig \ref{fig:defaultdcl}.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    Num : 0 /* Zero value */
+    Text : "" /* An empty string */
+    Bool : false /* False value */
+    \end{lstlisting}
+    \caption{Default values in \lang{}}\label{fig:defaultdcl}
+\end{figure}
+
+An example of these two forms of declaration is demonstrated on fig \ref{fig:dclEx}:
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    /* Normal declarations */
+    dcl num x                           /* x = 0 */
+    dcl text s                          /* s = "" */
+    dcl bool b                          /* b = false */
+    dcl list of text myList1             /* myList.length() = 0 */
+    
+    /* Assignment declarations */
+    dcl num y to 5                      /* x = 5 */
+    dcl text p to "Hello World"         /* s = "Hello World" */
+    dcl bool c to true                  /* b = true */
+    dcl list of text myList2             /* myList.length() = 0 */
+    \end{lstlisting}
+    \caption{Example of declarations in \lang{}. A value must be assigned something as it is declared.}
+    \label{fig:dclEx}
+\end{figure}
+
+\subsubsection{Assignment}
+An assignment is done as seen on figure \ref{fig:ass}
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    set x to 5      /*x = 5*/
+    set s to x      /*s = "5"*/
+    set b to true   /*b = true*/
+    \end{lstlisting}
+    \caption{Example of assignments in \lang{}}\label{fig:ass}
+\end{figure}
+
+\subsubsection{Lists}
+A declaration of a list differentiates from other declarations, since the user must define the type of the elements in the list. A list declaration and the functions associated with the list type can be seen on figure \ref{fig:list}
+
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    dcl list of text myList
+    
+    myList.add("hello") /*adds the string "hello" to myList*/
+    myList.removeAt(5) /*removes item at index 5 in the list. 0-indexed.*/
+    myList.remove("hello") /*removes all instances that equals "hello" from the list.*/
+    myList.get(5) /*get the item at index 5.*/
+    myList.find("hello") /* returns the first index of "hello", returns -1 if not found.*/
+    
+    \end{lstlisting}
+    \caption{Example of how to use list in \lang{}}\label{fig:list}
+\end{figure}
+
+Next is the arithmetic operations of \lang{}.
+
+\subsubsection{Operations}
+
+The operations allowed in \lang{} can be divided into two different types: Arithmetic operations and relational operations. 
+
+The arithmetic operators are: Addition(+), subtraction(-), division(/), multiplication(*) , modulo(\%) and unary-minus(-). These does all work on two nums and return a num, except for \textit{+}, which also can be used on \textit{text} variables to concatenate two strings or a string with another variable, i.e. a num or boolean, and return a variable of type \textit{text}.
+
+The other type of operations - relational operations - are: Not equals(!=), less than(<), greater than(>), equals(=), greater than or equals(>=) and less than or equals(<=), which all take two num values and return a boolean value. Furthermore, there are not(!) which takes one boolean values and returns a boolean value, and \textit{or} and \textit{and}, which takes two boolean values and return a boolean value.
+
+
+
+\subsection{Functions}
+
+Functions are an essential part of \lang{}. The following sections contains an example of function declarations and function calls.
+
+\subsubsection{Function declaration}
+An example of a function declaration can be seen on figure \ref{fig:funcdcl}.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    dcl func name(num x, paramtype paramname) begin
+
+        /*Can only return in the end of a function, only one return per function.*/
+
+        return 5 + 5
+    end
+    \end{lstlisting}
+    \caption{Example of function declaration in \lang{}}\label{fig:funcdcl}
+\end{figure}
+
+Note that the return type of a function is not defined on the declaration, but is defined by the type of the return expression. The return expression (5 + 5), from the example on figure \ref{fig:funcdcl}, evaluates to a num and the return type of the function is therefore num. If the function does not have a return, the function has type \textit{void}.
+
+\subsubsection{Function call}
+A function call in \lang{} is as it is in most languages. It is simple the name of the function, followed by a pair of parenthesis containing the parameters for the function. In most languages a function call would be followed by some kind of line-ending symbol, but in \lang{} this does not exist. Instead a line is terminated by a simple new-line. 
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    functionName(param)
+    \end{lstlisting}
+    \caption{Example of function call in \lang{}}\label{fig:funccall}
+\end{figure}
+
+\subsubsection{Recursion}
+Recursion is not allowed in \lang{}. This is an active choice, as only a few amount of scenarios require the use of recursion. This is due to the fact that most recursions can be rewritten as an iterative expression using \textit{for} or \textit{while}. Therefore to simplify \lang{}, this feature is not implemented.
+
+\subsection{Classes}
+In \lang{} classes are declared by writing "dcl class Name" as shown in the figure below:
+\textbf{Declaration:}
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    dcl class Name begin
+        /*declare stuff in here*/
+    end
+
+    dcl class Name is ParentClass begin
+        /*declare stuff in here*/
+    end
+    \end{lstlisting}
+    \caption{Example of assignments in \lang{}}\label{fig:classdcl}
+\end{figure}
+Inheritance is done via the "is" keyword. This method is what is used for all user-created classes, but in addition to this, a few static classes exist, which exposes certain parts of the Slick library and parts of Java to the user of \lang{}.
+\subsubsection{Static classes}
+Math is a static class that exposes corresponding mathematical functions found in Java to the user of \lang{}.
+\textbf{Math:}
+\begin{itemize}
+    \item roundUp(num)
+    \item roundDown(num)
+    \item round()
+    \item sqrt(num)
+    \item pwr(num,whatItIsToThePowerOf)
+    \item getRandomNum(low, high)
+\end{itemize}
+
+\textbf{Game:}
+Game exposes variables that lets the user of \lang{} access often needed variables, these are:
+\begin{itemize}
+    \item width/height
+    \item sprites - list of all sprites. This list is where the programmer is supposed to store all the things to be drawn and moved around the screen. It is kept in a list to simplify the drawing part of making a game, as they will automatically be drawn.
+    \item Background - The path to an image.
+\end{itemize}
+
+\textbf{Input:}
+To handle user input, a class is created in \lang{} called \textit{Input}. \textit{Input} has a \textit{Keyboard object}, which in turn has a \textit{Key} object for each key on a normal keyboard. Each key has boolean values for if it is pressed or hold down. The \textit{Key} class can be seen on figure \ref{fig:keyclass}.
+
+
+%\begin{itemize}
+%    \item IsKeyDown(Key)
+%    \item IsKeyPressed(Key)
+%    \item IsKeyUp(Key)
+%    \item Key - constants for each key and mouse key.
+%    \item MousePos
+%    \item MouseMove
+%    \item ReadText - Reads in a text, terminated by newline, and returns it.
+%\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    class Key begin
+        dcl bool isPressed
+        dcl bool isDown
+    end
+    \end{lstlisting}
+    \caption{The Key class}\label{fig:keyclass}
+\end{figure}
+
+
+\subsection{Eventhandlers}
+Eventhandlers are functions that are called when a certain event happens in the program. An example of this is seen in figure \ref{fig:eventhandup}.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    OnUpdate(num delta) do
+        if input.key.W.isDown then
+             set vel to -1
+        else if input.key.S.isDown then
+             set vel to 1
+        else
+            set vel to 0
+        end
+        set posY to posY+(vel*speed*(delta/1000))
+    end
+    \end{lstlisting}
+    \caption{OnUpdate from Ping Pong}\label{fig:eventhandup}
+\end{figure}
+
+\textbf{OnUpdate()}
+OnUpdate is code that is executed every time the program updates. Note that graphics are not executed as often as the update.
+
+\textbf{OnCollision(Sprite other)}
+OnCollision is code that is executed when a Sprite object collides with another Sprite object.
+
+\textbf{OnConstruct()}
+OnConstruct is the constructor for the class, where \textit{base()} is the parent construct.
+
+
+
+To build upon this section, and brush out some of the concepts described in this section, a tutorial has been defined in the following section.

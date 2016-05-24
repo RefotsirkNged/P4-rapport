@@ -1,0 +1,151 @@
+\section{Writing a game in \lang{}}
+This chapter will go through and explain the process of writing a simple ping-pong like game in \lang{}. The full source-file can be found in appendix \ref{sourcepingpong}, and it might be helpful to have the aforementioned source file open while reading this guide. 
+\section{Preparations}
+There is no dedicated IDE for writing in \lang{}. It can, and should, be written in a basic text-editor, like Notepad(\cite{notepad}) or whichever text-editor is available to the user.\\
+The first thing to write in any program in \lang{} is a "Main" method. It should look as follows:
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    Main begin
+        //Variable declarations, statements, initialisations....
+    end
+    \end{lstlisting}
+    \caption{Main declaration}
+    \label{fig:maindcl}
+\end{figure}
+The "Main" method contains initialization of variables, statements, function calls etc. The purpose of this "Main" method is to handle initialisation of the game, so for example, this might be the place to declare an object for the player, for the enemy and for the ball, and initialize those objects, as seen in the following example:
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    Main begin
+        dcl Player player to new Player()
+        dcl Enemy enemy to new Enemy()
+    end
+    \end{lstlisting}
+    \caption{Initialization of the Player and Ball objects inside Main}
+    \label{fig:maindclinit}
+\end{figure}
+Not much else can happen in the "Main" method. 
+%This is by design, as the contents of this method are injected into an initialization part of the Slick library's setup. 
+
+\subsection{Writing the game}
+Moving on from the "Main" method, the first things to look at are the different objects, the user wants to draw on the screen. In the case of Ping Pong, that would be a "Player" object, "Enemy" object, and maybe a couple of "Ball" objects. Any object, that is to be drawn on the screen, must inherit from the \lang{} class Sprite, so as to enable all the common operations that Sprite implements:
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    class Player is Sprite begin
+        //Some kind of logic or content here.
+    end
+    \end{lstlisting}
+    \caption{Any object to be drawn, must inherit from Sprite.}
+    \label{fig:objdrawinherit}
+\end{figure}
+
+
+\subsubsection{Player}
+The "Player" object is supposed to be the interactive part of the game, taking user input, translating them into operations applied to the graphics drawn on the screen. In the beginning of the class, variables for holding the speed of the object are declared, but also a Label object, which is coupled to the score value created on a global scope, as seen on figure \ref{fig:tutglobal}
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    dcl num score1 to 0
+    dcl num score2 to 0
+    Main begin
+    
+    end
+    
+    ...
+    
+    class Player is Sprite begin
+        dcl num speed
+        dcl num vel
+    
+        dcl Label p1 to new Label("Player 1 : " + score1, 100, 100)
+
+    \end{lstlisting}
+    \caption{Example of how global variables and Labels are used.}\label{fig:tutglobal}
+\end{figure}
+Anything declared before the Main declaration is considered a global variable. This Label object is used to display small amounts of text on the screen, and in this case it shows the score for each player. 
+
+\textbf{Events}
+
+In order for any class to interact with the game, it has to be done through the use of the different events, namely OnUpdate, OnConstruct and OnCollision.
+The "Player" class uses OnConstruct to set the starting position and speed, set the texture for the object and adds itself to the list of sprites being drawn on the screen. As seen on figure \ref{fig:playerConstr}.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    OnConstruct() do
+        base(40, 200, 20, 150, "Player")
+        set speed to 200
+        set texture to "Resources/redfighter0006.png"
+        game.Sprites.add(this)
+    end
+    \end{lstlisting}
+    \caption{OnConstruct in the Player class.}\label{fig:playerConstr}
+\end{figure}
+
+The \textit{Player} object also uses OnUpdate, which handles all of the game logic. OnUpdate is executed many times each second, and each time around it checks if the state of the system has changed. For example, when a button is pressed, it is actually not acted upon until next execution of OnUpdate, but the fact that it is executed so many times every second, allows the user to make games that are interactive and responsive. The last line of the OnConstruct method, "game.Sprites.add(this)", simply adds the Player object, that was just created, to the list of sprites that are to be drawn on the screen. \lang{} handles everything concerning the drawing. To draw something, it simply has to be added to the list of sprites. 
+Inside OnUpdate, it checks which button has been pressed. It goes through every direction the Player can move, and if they have been pressed, it reacts to it accordingly. It is implemented as seen on figure \ref{fig:tutupdate}
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    OnUpdate(num delta) do
+        if input.key.W.isDown then
+             set vel to -speed
+        else if input.key.S.isDown then
+             set vel to speed
+        else
+            set vel to 0
+        end
+        set posY to posY+vel * (delta / 1000)
+
+        if posY < ball.posY then 
+              set vel to speed
+
+            else if posY > ball.posY then
+              set vel to -speed
+        end
+        set posY to posY+vel  * (delta / 1000)
+
+        p1.updateText("Player 1 : " + score1)
+    end
+    \end{lstlisting}
+    \caption{OnUpdate of the Player class.}\label{fig:tutupdate}
+\end{figure}
+
+Lastly, it updates the Label containing the label used to show the score. 
+
+\subsubsection{Enemy}
+The enemy class is similar to the Player class, without the input handling part. The OnUpdate of Enemy instead has statements to change the direction of itself based on where the ball is located, implemented as shown in figure \ref{fig:enemyupdate}.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    OnUpdate(num delta) do                           
+        if posY < ball.posY then            
+          set vel to speed
+    
+        else if posY > ball.posY then
+          set vel to -speed
+        end
+        set posY to posY+vel  * (delta / 1000)
+        p2.updateText("Player 2 : " + score2)
+    end
+    \end{lstlisting}
+    \caption{Enemy OnUpdate}\label{fig:enemyupdate}
+\end{figure}
+
+The "Ball" object is initialized on the global level, and as such, it is available at any point in the programs execution. This is then used in the Enemy class to reverse the direction of the Enemy based on the ball. 
+The only other thing to be executed in the Enemy object, is the creation of a label, which displays the score. 
+
+
+\subsubsection{Ball}
+The Ball object is a bit more complicated than Player and Enemy. In addition to having speed and direction, through the use of OnUpdate, it uses OnCollision to detect when it collides with a player or an enemy. When this happens, it reverses its current direction, and reflects off of the Player or enemy. OnUpdate also takes care of handling the ball hitting walls, and of getting it the right texture. 
+\todo{skal der ikke vaere et kode eks.? Jo for Soeren!}
+
+\subsection{Compiling and Executing the final Game}
+When the developer wants to compile the \lang{} code they wrote into a working game, they use the \lang{} compiler GUI. The developer needs to specify the file they want to compile, and then click on the "compile" button. After the compiling is done, any errors will show up in the list below the buttons. If the compiling was successful, a folder opens with the finished game inside. The game must be executed from this folder, or a folder containing the same files. This is due to some libraries that is copied into the folder, which has to be present in the same folder as the game jar. 
+
+\todo{Overgang til næste del}

@@ -1,0 +1,72 @@
+\section{Type Rules}\label{sec:TypeRules}
+The language \lang{} has the types \{num, text, bool\}. They contain the variables that can be seen in figure \ref{fig:InTypeRules}.
+
+\begin{figure}[H]
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+    \textbf{\lang{}: Beginner Friendly Game language} \\
+    \textbf{Type}
+    \begin{enumerate}  
+        \item float 
+        \item string
+        \item boolean
+    \end{enumerate}
+    \textbf{KeyWords}
+    \begin{enumerate}  
+        \item num : float 
+        \item text : string 
+        \item bool : boolean 
+        \item Vector : float, float
+    \end{enumerate}
+    \textbf{Variables}\\
+    Variables can be any combination of the upper and lower case letters from a to z and numbers from 0 to 9, provided that the first character is not a number.\\
+    \noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+    \caption{Informal Type Rules}
+    \label{fig:InTypeRules}
+\end{figure}
+
+A type environment is a partial function \[E : \textbf{Var} \cup \textbf{Pnames} \rightharpoonup \textbf{Types}\]
+The environment is updated with 
+\[ \textbf{E}[x\mapsto T] \] 
+and the type environment \textbf{E'} defined by
+\[\textbf{E'(y)} = \bigg \{ \quad \begin{aligned}  E(y) \\ T \end{aligned} \quad \begin{aligned} if\ y \neq x \\ if\ y = x \end{aligned}\quad \bigg \} \]
+
+\lang{} is able to add a num with a num arithmetically and a text with a text using concatenation. Furthermore, it is able to add a text with num with concatenation by implicitly converting the num to a text.\\
+\[ \textbf{[TextAdd]} \frac{E \vdash e_1 : type_1 \quad E \vdash e_2 : type_2}{E \vdash e_1 + e_2 : text}\quad \textbf{Where}\: \begin{aligned} type_1\: ,\ type_2\: \in \{text, num\} \\   type_1\ or\ type_2\ is\ text \end{aligned}\]
+All the other arithmetical operators - subtraction, multiplication, division, modulus and unary - are not usable on text, as these only work on nums.
+\[ \textbf{[Arithmetic]} \frac{E \vdash e_1 : num \quad E \vdash e_2 : num}{E \vdash e_1\ op\ e_2 : num}\quad \textbf{Where}\: op\: \in \{+,-,*,/\}\]
+Furthermore, relational operators can be used on two nums creating a bool. These operators are: and, or, greater than, less than, greater than or equals, less than or equals, equals and not equals.
+
+\[ \textbf{[Relational]} \frac{E \vdash e_1 : num \quad E \vdash e_2 : num}{E \vdash e_1\: op\: e_2 : bool}\quad \textbf{Where}\: op\: \in \{<,<=,>,>=,=,!=\}\]
+\[ \textbf{[Gates]} \frac{E \vdash e_1 : bool \quad E \vdash e_2 : bool}{E \vdash e_1\: op\: e_2 : bool}\quad \textbf{Where}\: op\: \in \{and,or\}\]
+
+Furthermore, unary can be used on a single num, creating a new num:
+\[ \textbf{[Unary]} \frac{E\, \vdash e_1 : num }{E\, \vdash -e_1 : num}\]
+The boolean expression 'not' takes a bool and returns a bool.
+\[ \textbf{[Not]} \frac{E\, \vdash e_1 : bool }{E\, \vdash !e_1 : bool}\]
+
+Some relational operators can also be used on two texts, namely equals and not equals, comparing whether a text is identical to the other: 
+\[ \textbf{[Less]}\frac{E\, \vdash e_1 : text \quad E \vdash e_2 : text}{E\, \vdash e_1\ rel\ e_2 : bool}\quad \textbf{Where}\ rel \in \{=,!= \}\]
+
+To check if the type of x is the same type that is declared, variables are defined as:
+\[ \textbf{[Var]}E \vdash x : type\quad \textbf{if}\ E(x)  = type\]
+
+A function is called by taking a number of expressions as parameters that each have a type, which can return a variable:
+\[ \textbf{[Fcall]}\frac{E\, \vdash e_1:type_1\ ...\ E\, \vdash e_n:type_n}{E\vdash f(e_1,\ ...\ ,\ e_n):type}\quad \textbf{Where}\ E(f)=(type_1\: \, ...\: ,\ type_n)\rightarrow type\]
+
+The function gets a list of parameters in the start - \(x_1\ ...\ x_n\) - and a type for each of them. It also has a return variable, whose type is defined under compile time:
+\[\textbf{Func-Dcl]} \frac{\langle D_M\: ,\ E[f \mapsto (type_1\: ,\ ...\: ,\ type_n \rightarrow type)] \rangle \rightarrow E'}{\langle f(type_1\ x_1\: ,\ ...\: ,\ type_n\ x_n):type\ begin\ B\ end\ D_M\: ,\ E \rangle \rightarrow E'}\]
+In the var declaration, variable x and its type get connected. Afterwards, the type environment gets updated with information:
+\[ \textbf{[Var-Dcl]} \frac{\langle D_V,E[x \mapsto type ]\rangle \rightarrow E'}{\langle dcl\ type\ x\ D_V\: ,\ E \rangle E'}\]
+\[\textbf{[Empty-Dcl]} \langle \varepsilon, E \rangle \rightarrow E \]
+
+In Block, \(D_V\) and \(M_C\) are checked if they return void. In Prog 1 and 2, it is \(\{D_V\: ,\ S\}\) and \(\{D_C\: ,\ P\}\) respectively. This is done because they, by being void, are type correct. Everything has to have a type, and if these return a void, it means they have run correctly.
+\[\textbf{[Block]} \frac{\langle D_V, E \rangle \rightarrow E' \quad E' \vdash M_C:void}{E \vdash \{D_V,M_C\}:void}\]
+\[ \textbf{[Prog 1]} \frac{\langle D_V, E \rangle \rightarrow E' \quad E' \vdash S:void}{E \vdash \{D_V,S\} : void}\]
+\[\textbf{[Prog 2]} \frac{\langle D_C, E \rangle \rightarrow E' \quad E' \vdash P:void}{E \vdash \{D_C, P\}:void}\]
+
+In ForUp and ForDown, the x and e are checked if they are num. B is checked if it returns void.
+\[\textbf{[ForUp]} \frac{E(x) = num \quad E \vdash e:num \quad E \vdash B:void}{E \vdash for\ x\ upto\ e\ do\ B\ end:void}\]
+\[\textbf{[ForDown]} \frac{E(x) = num \quad E \vdash e:num \quad E \vdash B:void}{E \vdash for\ x\ downto\ e\ do\ B\ end:void}\]
+
+In While, the boolean expression is checked if it is a bool. B is checked if it is void.
+\[\textbf{[While]} \frac{E(b) = bool \quad E \vdash B:void}{E \vdash while\ b\ do\ B\ end:void}\]

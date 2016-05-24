@@ -1,0 +1,34 @@
+\section {Formal grammar specification of \lang{}}
+In \ref{pgen} SableCC was chosen as the parser/scanner generator to be used in this project. Because of this, the grammar has certain traits/naming conventions that had to be enforced for it to work with SableCC. An example of this is the "prog" production:
+
+\begin{figure}[H]
+  \centering
+    \begin{lstlisting}
+     prog        {-> prog}   =   global* maindcl newline? classdcl*
+    \end{lstlisting}
+  \caption{The prog production. This tells SableCC how to name certain parts of the output.}
+  \label{fig:prog}
+\end{figure}
+
+In the scope of this chapter the grammar will however have these parts stripped out, to facilitate reading. The full grammar, with nothing stripped out, can be found in appendix \ref{FullGrammar}. \todo{Present the grammar as an EBNF one and just mention that the actual grammar spec for SableCC can be found in appendix \ref{FullGrammar}}
+
+
+\subsubsection{Operator precedence}
+This enforces precedence, because the compiler uses depth-first as the method to travel the AST, as explained in \todo{insert ref}.\todo{<This is wrong apparently. Also not relevant I guess.} \todo{LR parsers (which are bottom-up) have operators with higher precedence deeper in the AST} 
+
+
+
+This construction is also used to make nested expressions, because at some point in the derivation of bexpr, it is allowed to derivate backwards to "bexpr".
+
+\subsubsection{Function declarations, Event declarations, Inheritance}
+Function calls are achieved with parameter by using "bexpr", which also lets the function take expressions as parameters. Event declarations look a lot like a function call, but the important bit is that it is named differently on the AST. This allows for proper handling of these events later on, seperate from the handling of the function declarations. This is specifically important in \lang{} because it has some build in events that are used to handle game-logic and graphics, which needs to be handled seperately from a normal function declaration.
+\lang{} is an OOP language\todo{insert thingy with short explain of oop}, and as such it needs some form of inheritance. This is achieved with the "inherit" production:
+\todo{insert inherit prod}
+This allows for single-inheritance, not multiple inheritance, as the "type" result of deriving "inherit" can only go to an object, not multiple objects.
+\todo{what is the message that you want the reader to get here ?}
+
+
+\todo{Operator precedence is a way to have unambigous binary (infix) operators without requiring one to write too many parenthesis. It has NOTHING to do with traversal strategy of the AST}
+
+
+

@@ -1,0 +1,70 @@
+Abstract Syntax Tree \label{AST}
+
+    prog        =   [globaldcl]:pdcl* [maindcl]:pdcl [classdcl]:pdcl*;
+
+    pdcl        =   {var} type id
+                |   {varasg} type id expr
+                |   {list} type id
+                |   {class} id body*
+                |   {main} body*
+                |   {event} id [params]:param* [body]:stmt*
+                |   {func} id [params]:param* body;
+
+    body        =   {func} stmt* return
+                |   {class} pdcl;
+
+    return      =   {id} expr
+                |   {empty} ;
+
+    param       =   {formal} type id param*;
+
+    inherit     =   type;
+
+    type        =   {num} num
+                |   {bool} bool
+                |   {text} text
+                |   {object} id;
+
+    call        =   {func} id [params]:expr*
+                |   {class} [first]:call [rest]:call*
+                |   {val} val
+                |   {var} id;
+
+    expr        =   {minus} [left]:expr [right]:expr
+                |   {plus} [left]:expr [right]:expr
+                |   {divide} [left]:expr [right]:expr
+                |   {mult} [left]:expr [right]:expr
+                |   {mod} [left]:expr [right]:expr
+                |   {or} [left]:expr [right]:expr
+                |   {and} [left]:expr [right]:expr
+                |   {equals} [left]:expr [right]:expr
+                |   {notequals} [left]:expr [right]:expr
+                |   {greater} [left]:expr [right]:expr
+                |   {less} [left]:expr [right]:expr
+                |   {greaterequals} [left]:expr [right]:expr
+                |   {lessequals} [left]:expr [right]:expr
+                |   {unary} expr
+                |   {not} expr
+                |   {val} val
+                |   {call} call
+                |   {id} id;
+
+    val         =   {num} numval
+                |   {text} textval
+                |   {bool} boolval
+                |   {constr} id [param]:expr*;
+
+    stmt        =   {vardcl} pdcl
+                |   {assignment} id expr
+                |   {forup} id expr stmt*
+                |   {fordown} id expr stmt*
+                |   {while} expr stmt*
+                |   {if} conditional
+                |   {funccall} call
+                |   {classcall} call
+                |   {eventdcl} pdcl;
+
+    conditional  =   {if} expr stmt* branch?;
+
+    branch      =   {else} stmt*
+                |   {elseif} expr stmt* branch?;

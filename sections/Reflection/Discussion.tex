@@ -1,0 +1,70 @@
+\section{Discussion}
+In this section, the following points are discussed:
+
+\begin{itemize}
+    \item Preliminary analysis
+    \item Tennents language design principles
+    \item Test
+\end{itemize}
+
+These points are discussed to give an insight into the different reflections that the authors of this report has done, and to evaluate some of the decisions made in this project.
+
+
+\subsection{Preliminary analysis}
+The goal of this project was to design and implement a beginner friendly language, and as such, it would have been advantageous if we had done a survey of what knowledge and experience the target audience has in programming and developing software. This could have helped in the design process, since it would have granted some information about what preliminary knowledge the user has.
+
+The language design could have benefited from having an ongoing conversation with either a person with experience in teaching young people, i.e. a teacher, and from tests and surveys performed on the different chosen language structures, all throughout the project. This could have helped in making the design more friendly to use in an educational context, and in improving the overall design, with regards to the main purpose of the language.
+
+The reason for why neither one of these has been done, is that they both were given a lower priority and in the end we had to move on with the project and start implementing the compiler for the language. At this point, it was too late to start on either one, so it was skipped entirely.
+
+\subsection{Tennents language design principles}
+Tennents language design principles is a collection of principles that can be very useful when designing a language. These principles are not a strict set of rules, but rather some concepts that should be kept in mind when designing a language. Keeping these principles will help the language being well-designed and easy to understand, as the focus of the rules is to not make any confusing and illogical constructs. There are 3 core principles, as presented in the following sections. 
+
+\subsubsection{Principle of Abstraction}
+
+
+\subsubsection{Principle of Correspondence}
+The principle of correspondence refers to the fact that any declaration, could be turned into a parameter and a corresponding function, as shown here:
+\begin{figure}
+    \centering
+    \begin{lstlisting}[style=gglang]
+    num i
+    func DoSomething() begin
+        set i to 12
+    end
+    
+    //The above corresponds to the below in \lang{}
+    
+    func DoSomething(num i) begin
+    set i to 12
+    end
+    \end{lstlisting}
+    \caption{Principle of correspondence in \lang{}}
+    \label{fig:niggers}
+Because of this correspondence, the principle of correspondence is kept in \lang{}.
+\subsubsection{Principle of Data Type Completeness}
+According to Tennents principles, a data type is complete if it is a first class object, without any special restrictions on the use of the object. All data types in \lang{} are first class, and there is no restrictions on how they can be used. Because of this, the principle of Data Type Completeness is kept for \lang{}.
+
+\subsection{Test}
+During the implementation phase of the compiler, a corresponding test project was created. In this testing project, different kinds of tests were conducted. These tests covered that the output of the compiler was correct, but did not test any further than that. The testing was limited mainly due to a lack of time, but could easily be expanded to cover the whole compiler project. 
+
+\section{Future work}
+The following sections will focus on what could, and should, be done in the future, if \lang{} was ever to be released to the public, and taken into educational use.
+
+\subsubsection{Usability evaluation}
+No usability evaluation of \lang{} was conducted during the project. In any future work on \lang{}, it is critical to conduct usability tests on the \lang{} language and compiler and make the necessary corrections to the language. This is needed since the language is meant to as a teaching tool, and must therefore be easy to use. The easy of use can be controlled using these tests.
+
+\subsubsection{IDE}
+To help the user when writing games in \lang{}, an IDE should be developed to provide syntax highlighting, auto completion of keywords, game templates to help a user get started, and, in the form of hints, concerning the use of different keywords. A feature, that is missing in the current GUI for using the compiler, is also the possibility to see multiple errors from the lexer/parser phase. As it is at the moment, only 1 error from that phase will be shown at a time, due to limitations in SableCC. This feature could be implemented in future work.\newline
+A way of implementing the IDE, in a simple yet effective way, would be to create a plugin for something like notepad \cite{notepad}. This would allow for syntax highlighting, without having to implement a full IDE. 
+
+\subsubsection{Separation of classes}
+Providing the ability to separate classes into different text files would provide the user with an easier way to get an overview of the game as a whole. In addition to that, it also makes unit testing easier to implement, and aids maintenance of the code base. 
+The concept of separation of classes is a common thing in most programming languages, and as such, it should ideally be implemented into \lang{}.
+
+\subsubsection{Custom libraries}
+To make it possible for the user to implement new features in their game, which is not possible in standard \lang{}, it is necessary to allow the user to write custom libraries in either java or \lang{}. This would greatly increase the functionality of \lang{}.
+In the current state of \lang{}, it is not possible for the user to implement new libraries, or use libraries written in java. This would be a highly useful feature, and would allow for even better games to be made. As such, it is a goal for future implementations that this is implemented. 
+
+\subsubsection{Community hub}
+A sort of community hub, preferably in the form of a forum, for people who wants to use \lang{} to learn about programming, would be an invaluable tool for new users of \lang{}. It would also allow users to share their games, and any custom libraries, they might use. Lastly, it would provide a centralized platform for people seeking help regarding the usage of the \lang{} compiler itself, including a place for reporting any bugs that might appear in the implementation. 

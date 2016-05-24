@@ -1,0 +1,32 @@
+\section{Parser Generator}\label{sec:pgen}
+This is a brief review of the different parser generators. The five different parser generators, covered in this section, are:
+
+\begin{itemize}
+    \item Gold Parser
+    \item XText
+    \item Java Cup
+    \item SableCC
+    \item ANTLR
+\end{itemize}
+These were chosen, as they were prominent, and together cover the different sorts of parser generators.
+
+\subsection{Gold Parser}
+The Gold parser uses a grammar that is based on the Backus-Naur form(BNF) and regular expressions. Gold Parser is a LALR(1) parser. LALR(1) is simpler than LR(1), while targeting almost the same languages, which makes it easier to use. 
+On the downside, Gold Parser has less extensive documentation compared to other popular parsers, making it harder to get started with Gold Parser.
+
+\subsection{XText}
+XText uses the grammar Extended Backus-Naur Form(EBNF) and is an LL(1). It implements features integrated into the eclipse IDE \cite{eclipse}, which lets the IDE make highlighting and static syntax checks. These features make the created language more accessible to the end user. Furthermore, XText is well defined through its documentation. XText makes use of ANTLR3 to construct the parse tree, as this feature is not inherent to XText.
+
+\subsection{Java CUP}
+Java CUP uses a modified version of EBNF. It is an LR(1) parser and implements a visualization of the  Abstract Syntax Tree(AST). Java CUP is no longer officially supported, but the community has taken over the project and is supporting it under the name Community Z Tools.
+
+\subsection{SableCC}
+SableCC uses EBNF for its grammar. it uses, like Gold Parser, LALR(1) for its parser. SableCC has some good features such as an Automatic AST builder for multi-pass compilers, the ability to access sub-nodes by their name instead of their position and a way to pretty print the AST. It also features a clear distinction between user code and machine generated code and is easy to debug. In Version 3.0 it allows declarative grammar transformations.
+
+\subsection{ANTLR4}
+ANTLR4 uses the EBNF for its grammar and LL(*)  for its parser. It also has a built-in lexer which XText needs to work. It allows the user to pretty print the AST. ANTLR was first introduced in 1989 and its latest version is ANTLR4. It is used in a wide variety of applications from data warehouses to Twitter.
+
+\subsection{Conclusion}
+In this project, it is concluded that SableCC is the best choice for a parser. The reason for this, is the fact that SableCC is a LALR parser, object-oriented, easy to debug, the fact that grammar and action code are separated, has a built-in scanner, can build abstract syntax trees and is in Extended Backus-Naur Form.
+An LL(*) parser could have been used in the implementation of \lang{}, since the \lang{} language, and many others, are LL(*).
+An LL(*) is simpler than their LR or LALR counterpart, and can be made recursively. \lang{} is however not expected to grow so big that a simpler parser is needed, which is why SableCC is still the chosen parser generator. The grammar would also have to be defined as LL(*) instead of LALR, which is not always easy to do.

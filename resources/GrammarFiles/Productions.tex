@@ -1,0 +1,104 @@
+Productions \label{Productions}
+    prog        {-> prog}   =   global* maindcl newline? classdcl*                      {-> New prog([global.pdcl], maindcl.pdcl, [classdcl.pdcl])};
+
+    global      {-> pdcl}   =   vardcl newline                                          {-> vardcl.pdcl};
+
+    maindcl     {-> pdcl}   =   {maindcl} eclass main begin newline classbody* end      {-> New pdcl.main([classbody.body])};
+
+    classdcl    {-> pdcl}   =   {classdcl} [b]:newline eclass id inherit? begin [a]:newline classbody* end    {-> New pdcl.class(id, [classbody.body])};
+
+    classbody   {-> body}   =   {dcl} vardcl newline                                                            {-> New body.class(vardcl.pdcl)}
+                            |   {funcdcl} dcl func id lparen formalparam? rparen begin funcbody end newline     {-> New body.class(New pdcl.func(id, [formalparam.param], funcbody.body))};
+
+    funcbody    {-> body}   =   newline stmt* return                                    {-> New body.func([stmt.stmt], return.return)};
+
+    return      {-> return} =   {returnid} treturn bexpr newline                        {-> New return.id(bexpr.expr)}
+                            |   {empty}                                                 {-> New return.empty()};
+
+
+    stmt        {-> stmt}   =   {vardcl} vardcl newline                                        {-> New stmt.vardcl(vardcl.pdcl)}
+                            |   {assignment} set id to bexpr newline                           {-> New stmt.assignment(id, bexpr.expr)}
+                            |   {forup} for id upto bexpr do [a]:newline stmt* end [b]:newline         {-> New stmt.forup(id, bexpr.expr, [stmt.stmt])}
+                            |   {fordown} for id downto bexpr do [a]:newline stmt* end [b]:newline     {-> New stmt.fordown(id, bexpr.expr, [stmt.stmt])}
+                            |   {while} while bexpr do [a]:newline stmt* end [b]:newline               {-> New stmt.while(bexpr.expr, [stmt.stmt])}
+                         //   |   {funccall} funccall newline                                    {-> New stmt.funccall(funccall.call)}
+                            |   {classcall} classcall newline                                  {-> New stmt.classcall(classcall.call)}
+                            |   {eventdcl} eventdcl newline                                    {-> New stmt.eventdcl(eventdcl.pdcl)}
+                            |   {ifstmt} ifstmt newline                                        {-> New stmt.if(ifstmt.conditional)};
+
+    vardcl      {-> pdcl}   =   {vardcl} dcl type id                                    {-> New pdcl.var(type.type, id)}
+                            |   {vardclasg} dcl type id to bexpr                        {-> New pdcl.varasg(type.type, id, bexpr.expr)}
+                            |   {listdcl} dcl list of type id                           {-> New pdcl.list(type.type, id)};
+
+    ifstmt      {-> conditional} =   if bexpr then newline stmt* elsestmt? end               {-> New conditional.if(bexpr.expr, [stmt.stmt], elsestmt.branch)};
+
+    elsestmt    {-> branch}=   {else} else newline stmt*                              {-> New branch.else([stmt.stmt])}
+                             |   {elseif} else if bexpr then newline stmt* elsestmt?    {-> New branch.elseif(bexpr.expr, [stmt.stmt], elsestmt.branch)};
+
+
+    bexpr       {-> expr}   =   {or} bexpr or bterm                                     {-> New expr.or(bexpr.expr, bterm.expr)}
+                            |   {term} bterm                                            {-> bterm.expr};
+
+    bterm       {-> expr}   =   {and} bterm and notfactor                               {-> New expr.and(bterm.expr, notfactor.expr)}
+                            |   {factor} notfactor                                      {-> notfactor.expr};
+
+    notfactor   {-> expr}   =   {not} not bfactor                                       {-> New expr.not(bfactor.expr)}
+                            |   {factor} bfactor                                        {-> bfactor.expr};
+
+    bfactor     {-> expr}   =   {relation} relation                                     {-> relation.expr};
+
+    relation    {-> expr}   =   {equals} [left]:expression equals [right]:expression                {-> New expr.equals(left.expr, right.expr)}
+                            |   {notequals} [left]:expression notequals [right]:expression          {-> New expr.notequals(left.expr, right.expr)}
+                            |   {greater} [left]:expression greater [right]:expression              {-> New expr.greater(left.expr, right.expr)}
+                            |   {less} [left]:expression less [right]:expression                    {-> New expr.less(left.expr, right.expr)}
+                            |   {greaterequals} [left]:expression greaterequals [right]:expression  {-> New expr.greaterequals(left.expr, right.expr)}
+                            |   {lessequals} [left]:expression lessequals [right]:expression        {-> New expr.lessequals(left.expr, right.expr)}
+                            |   {unarymin} minus expression                                         {-> New expr.unary(expression.expr)}
+                            |   {expression} expression                                             {-> expression.expr};
+
+    expression  {-> expr}   =   {minus} [left]:expression minus [right]:term            {-> New expr.minus(left.expr, right.expr)}
+                            |   {plus} [left]:expression plus [right]:term              {-> New expr.plus(left.expr, right.expr)}
+                            |   {term} term                                             {-> term.expr};
+
+    term        {-> expr}   =   {divide} [left]:term divide [right]:factor              {-> New expr.divide(left.expr, right.expr)}
+                            |   {mult} [left]:term mult [right]:factor                  {-> New expr.mult(left.expr, right.expr)}
+                            |   {mod} [left]:term mod [right]:factor                    {-> New expr.mod(left.expr, right.expr)}
+                            |   {factor} factor                                         {-> factor.expr};
+
+    factor      {-> expr}   =   {value} val                                             {-> New expr.val(val.val)}
+                            |   {var} id                                                {-> New expr.id(id)}
+                            //|   {func} funccall                                         {-> New expr.call(funccall.call)}
+                            |   {classcall} classcall                                   {-> New expr.call(classcall.call)}
+                            |   {parenexpr}lparen bexpr rparen                          {-> bexpr.expr};
+
+    type        {-> type}   =   {num} num                                               {-> New type.num(num)}
+                            |   {bool} bool                                             {-> New type.bool(bool)}
+                            |   {text} text                                             {-> New type.text(text)}
+                            |   {object} id                                             {-> New type.object(id)};
+
+    val         {-> val}    =   {numliteral} numval                                     {-> New val.num(numval)}
+                            |   {textliteral} textval                                   {-> New val.text(textval)}
+                            |   {boolliteral} boolval                                   {-> New val.bool(boolval)}
+                            |   {newobject} new id lparen actualparam? rparen           {-> New val.constr(id, [actualparam.expr])};
+
+    funccall    {-> call}   =   {singlefunc} id lparen actualparam? rparen              {-> New call.func(id, [actualparam.expr])};
+                    //        |   {nestedfunc} eclass id lparen actualparam? rparen dot funccall {-> New call.funcmulti(id, [actualparam.expr], funccall.call)};
+
+    actualparam {-> expr*}  =   {singleparam} bexpr                                     {-> [bexpr.expr]}
+                            |   {mulparam} bexpr comma [rest]:actualparam               {-> [bexpr.expr, rest.expr]};
+
+    formalparam {-> param}  =   {singleparam} type id                                   {-> New param.formal(type.type, id, [])}
+                            |   {mulparam} type id comma formalparam                    {-> New param.formal(type.type, id, [formalparam.param])};
+
+    classcall   {-> call}   =   {mulcall}singlecall dot multicall                               {-> New call.class(singlecall.call, [multicall.call])}
+                            |   {single} funccall                                       {-> funccall.call};
+
+    singlecall  {-> call}   =   {idcall} id                                             {-> New call.var(id)}
+                            |   {funccall} funccall                                     {-> funccall.call};
+
+    multicall   {-> call*}  =   {signle} singlecall                                     {-> [singlecall.call]}
+                            |   {multi} singlecall dot [rest]:multicall                 {-> [singlecall.call, rest.call]};
+
+    inherit     {-> inherit}    =    is type                                            {-> New inherit(type)};
+
+    eventdcl    {-> pdcl}  =   id lparen formalparam* rparen do newline [body]:stmt* end          {-> New pdcl.event(id, [formalparam.param], [body.stmt])};

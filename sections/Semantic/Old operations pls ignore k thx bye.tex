@@ -1,0 +1,165 @@
+Equal 1         &   \hbox{\huge \(\frac{s \vdash a_1 \rightarrow_a v_1 \quad s \vdash a_2 \rightarrow_a v_2}{s \vdash a_1 = a_2 \rightarrow_b \textit{tt}} \quad if \quad v_1 = v_2 \) }  \vspace{0.1pt} \\ \hline 
+\vspace {0.1pt} & \\  
+Equal 2         & \hbox{\huge \(\frac{s \vdash a_1 \rightarrow_a v_1 \quad  s \vdash a_2 \rightarrow_a v_2}{s \vdash a_1 = a_2 \rightarrow_b \textit{ff}} \quad if \quad v_1 \neq v_2 \)} \vspace {0.1pt} \\ \hline
+\vspace {0.1pt} & \\ 
+Not Equal 1     & \hbox{\huge \(\frac{s \vdash a_1 \rightarrow_a v_1 \quad s \vdash a_2 \rightarrow_a v_2}{s \vdash a_1 \neq a_2 \rightarrow_b \textit{tt}} \quad if \quad v_1 \neq v_2 \) } \vspace{0.1pt}  \\ \hline
+\vspace {0.1pt} & \\ 
+Not Equal 2     & \hbox{\huge \(\frac{s \vdash a_1 \rightarrow_a v_1 \quad s \vdash a_2 \rightarrow_a v_2}{s \vdash a_1 \neq a_2 \rightarrow_b \textit{ff}} \quad if \quad v_1 = v_2 \)}\vspace{0.1pt}  \\ \hline
+\vspace {0.1pt} & \\  
+Greater 1    & \hbox{\huge \(\frac{s \vdash a_1 \rightarrow_a v_1 \quad s \vdash a_2 \rightarrow_a v_2}{s \vdash a_1 > a_2 \rightarrow_b \textit{tt}} \quad if \quad v_1 > v_2 \)} \vspace {0.1pt}\\ \hline
+\vspace {0.1pt} & \\  
+Greater 2   & \hbox{\huge\(\frac{s \vdash a_1 \rightarrow_a v_1 \quad s \vdash a_2 \rightarrow_a v_2}{s \vdash a_1 > a_2 \rightarrow_b \textit{ff}} \quad if \quad v_1 \ngtr v_2 \) }\vspace {0.1pt} \\ \hline
+\vspace {0.1pt} & \\  
+Less 1      & \hbox{\huge\(\frac{s \vdash a_1 \rightarrow_a v_1 \quad s \vdash a_2 \rightarrow_a v_2}{s \vdash a_1 < a_2 \rightarrow_b \textit{tt}} \quad if \quad v_1 < v_2 \) }\vspace {0.1pt} \\ \hline
+\vspace {0.1pt} & \\  
+Less 2     & \hbox{\huge\(\frac{s \vdash a_1 \rightarrow_a v_1 \quad s \vdash a_2 \rightarrow_a v_2}{s \vdash a_1 < a_2 \rightarrow_b \textit{ff}} \quad if \quad v_1 \nless v_2 \)} \vspace {0.1pt} \\ \hline
+\vspace {0.1pt} & \\  
+Equal Greater 1 &  \hbox{\huge\(\frac{s \vdash a_1 \rightarrow_a v_1 \quad s \vdash a_2 \rightarrow_a v_2}{s \vdash a_1 \geq a_2 \rightarrow_b \textit{tt}} \quad if \quad v_1 \geq v_2 \) }\vspace {0.1pt} \\ \hline
+\vspace {0.1pt} & \\ 
+Equal Greater 2 & \hbox{\huge\(\frac{s \vdash a_1 \rightarrow_a v_1 \quad s \vdash a_2 \rightarrow_a v_2}{s \vdash a_1 \geq a_2 \rightarrow_b \textit{ff}} \quad if \quad v_1 \ngeq v_2 \)} \vspace {0.1pt} \\ \hline
+\vspace {0.1pt} & \\ 
+Equal Less 1    &  \hbox{\huge\(\frac{s \vdash a_1 \rightarrow_a v_1 \quad s \vdash a_2 \rightarrow_a v_2}{s \vdash a_1 \leq a_2 \rightarrow_b \textit{tt}} \quad if \quad v_1 \leq v_2 \)}\vspace {0.1pt} \\ \hline
+\vspace {0.1pt} & \\  
+Equal Less 2    &  \hbox{\huge\(\frac{s \vdash a_1 \rightarrow_a v_1 \quad s \vdash a_2 \rightarrow_a v_2}{s \vdash a_1 \leq a_2 \rightarrow_b \textit{ff}} \quad if \quad v_1 \nleq v_2 \)}\vspace {0.1pt}  \\ \hline
+\vspace {0.1pt} & \\  
+Not 1           & \hbox{\huge\(\frac{s \vdash b \rightarrow_b \textit{tt}}{s \vdash \neg b \rightarrow_b \textit{ff}}\) }\vspace {0.1pt}\\ \hline
+\vspace {0.1pt} & \\  
+Not 2           & \hbox{\huge\(\frac{s \vdash b \rightarrow_b \textit{ff}}{s \vdash \neg b \rightarrow_b \textit{tt}}\) }\vspace {0.1pt}\\ \hline
+
+
+
+
+\frac{env_v\: ,\ sto\, \vdash a_1 \rightarrow_a\: v_1 \quad env_v\: ,\ sto\, \vdash a_2 \rightarrow_a\: v_2}{env_v\: ,\ sto\, \vdash a_1\ op\ a_2 \rightarrow_b\: \textit{tt}} \quad if \ v_1\ op\ v_2 \quad where\ \begin{aligned} op\ \epsilon \=, \neq, >, <, \geq, \leq,\}
+
+
+\frac{env_v\: ,\ sto\, \vdash a_1 \rightarrow_a\: v_1 \quad env_v\: ,\ sto\, \vdash a_2 \rightarrow_a\: v_2}{env_v\: ,\ sto\, \vdash a_1\ op\ a_2 \rightarrow_b\: \textit{ff}} \quad if \ v_1\ op\ v_2 \quad where\ \begin{aligned} op\ \epsilon \{\neq, =, \not>, \not<, \ngeq, \nleq,\}
+
+
+\frac{env_v\: ,\ sto\, \vdash b \rightarrow_b\: \textit{tt}}{env_v\: ,\ sto\, \vdash \not b \rightarrow_b\: \textit{ff}}\)} 
+
+
+
+
+
+
+
+
+
+And 1     & \hbox{\huge\(\frac{s \vdash b_1 \rightarrow_b \textit{tt} \quad s \vdash b_2 \rightarrow_b \textit{tt}}{s \vdash b_1 \wedge b_2 \rightarrow_b \textit{tt}}\)} \vspace{0.1pt} \\ \hline 
+    \vspace {0.1pt} & \\
+And 2     & \hbox{\huge\(\frac{s \vdash b_i \rightarrow_b \textit{ff}}{s \vdash b_1 \wedge b_2 \rightarrow_b \textit{ff}} \quad \textit{i} \in {1,2}\)} \vspace{0.1pt} \\ \hline 
+    \vspace {0.1pt} & \\
+Or 1     & \hbox{\huge\(\frac{s \vdash b_i \rightarrow_b \textit{tt}}{s \vdash b_1 \vee b_2 \rightarrow_b \textit{tt}} \quad \textit{i} \in {1,2}\)} \vspace{0.1pt} \\ \hline 
+    \vspace {0.1pt} & \\
+Or 2     & \hbox{\huge\(\frac{s \vdash b_1 \rightarrow_b \textit{ff} \quad s \vdash b_2 \rightarrow_b \textit{ff}}{s \vdash b_1 \vee b_2 \rightarrow_b \textit{ff}}\)}
+
+
+
+
+
+
+\frac{env_v\: ,\ sto\, \vdash b_1 \rightarrow_b\: \textit{tt} \quad env_v\: ,\ sto\, \vdash b_2 \rightarrow_b\: \textit{tt}}{env_v\: ,\ sto\, \vdash b_1\ \wedge b_2 \rightarrow_b\: \textit{tt}}
+
+\frac{env_v\: ,\ sto\, \vdash b_i \rightarrow_b\: \textit{ff}}{env_v\: ,\ sto\, \vdash b_1\ \wedge b_2 \rightarrow_b\: \textit{ff}}
+
+\frac{env_v\: ,\ sto\, \vdash b_i \rightarrow_b\: \textit{tt}}{env_v\: ,\ sto\, \vdash b_1\ \vee b_2 \rightarrow_b\: \textit{tt}}
+
+\frac{env_v\: ,\ sto\, \vdash b_1 \rightarrow_b\: \textit{ff} \quad env_v\: ,\ sto\, \vdash b_2 \rightarrow_b\: \textit{ff}}{env_v\: ,\ sto\, \vdash b_1 \vee b_2 \rightarrow_b\: \textit{ff}}
+
+
+
+
+
+
+
+
+
+
+
+Før det blev deterministisk:
+\begin{table}[H]
+\begin{adjustbox}{center}
+\begin{tabular}{|c|c|}
+
+\hline
+\vspace {0.1pt} & \\
+Num             &   \hbox{\Large \(env_V,sto \vdash n \rightarrow_a v \)\normalsize\(\quad \textbf{if}\ N\llbracket n \rrbracket = v  \)}  \vspace{0.1pt} \\ \hline 
+\vspace {0.1pt} & \\  
+Var             & \hbox{\Large \(env_V, sto \vdash x \rightarrow_a v\)\normalsize\( \quad \textbf{if} \: \begin{aligned}  env_V\ x=l \\ sto\ l = v \end{aligned} \)} \vspace {0.1pt} \\ \hline
+\vspace {0.1pt} & \\  
+Var-Decl             &\pbox{20cm}{
+ \huge \(\frac{\langle D_V\: ,\ envv''\: ,\ sto[l\mapsto v]\rangle \rightarrow_{DV}\: (env'_V\: ,\ sto')}{\langle dcl\ var\ x\ to\ a\: \textbackslash n\ D_V\: ,\ env_V\: ,\ sto \rangle \rightarrow_{DV} (env'_V\: ,\ sto')} \)  \\ \\ \\ \normalsize \(  \textbf{where}\quad \: \begin{aligned}  env_V\: ,\ sto\, \vdash a \rightarrow_a \: v \\ l=env_V\ next \\ envv'' = env_V[x\mapsto l][next \mapsto new\ l] \end{aligned} \)} \vspace {0.1pt} \\ \hline
+\vspace {0.1pt} & \\
+Empty-Var       & \hbox{\Large \(\langle \varepsilon,env_V,sto\rangle \rightarrow_{DV} (env_V,sto)\)} \vspace {0.1pt} \\ \hline
+
+\end{tabular}
+\end{adjustbox}
+    \caption{Expr:Boolean}
+    \label{fig:my_label}
+\end{table}
+
+\begin{table}[H]
+\begin{adjustbox}{center}
+\begin{tabular}{|c|c|}
+
+\hline
+\vspace {0.1pt} & \\
+Relations 1     &   \hbox{\huge \(\frac{env_v\: ,\ sto\, \vdash a_1 \rightarrow_a\: v_1 \quad env_v\: ,\ sto\, \vdash a_2 \rightarrow_a\: v_2}{env_v\: ,\ sto\, \vdash a_1\ op\ a_2 \rightarrow_b\: \textit{tt}}\)\normalsize\( \quad \begin{aligned} \textbf{if} \ v_1\ op\ v_2 \\ \textbf{where}\  op \in \{=, \neq, >, <, \geq, \leq \}\end{aligned} \)}  \vspace{0.1pt} \\ \hline 
+\vspace {0.1pt} & \\  
+Relations 2     & \hbox{\huge \(\frac{env_v\: ,\ sto\, \vdash a_1 \rightarrow_a\: v_1 \quad env_v\: ,\ sto\, \vdash a_2 \rightarrow_a\: v_2}{env_v\: ,\ sto\, \vdash a_1\ op\ a_2 \rightarrow_b\: \textit{ff}}\)\normalsize\( \quad \begin{aligned} \textbf{if} \ \neg(v_1\ op\ v_2) \\ \textbf{where}\ op \in \{=, \neq, >, <, \geq, \leq \}\end{aligned} \)} \vspace {0.1pt} \\ \hline
+\vspace {0.1pt} & \\
+Not 1           & \hbox{\huge\(\frac{env_v\: ,\ sto\, \vdash b \rightarrow_b\: \textit{tt}}{env_v\: ,\ sto\, \vdash \neg b \rightarrow_b\: \textit{ff}}\)} \vspace {0.1pt}\\ \hline
+\vspace {0.1pt} & \\  
+Not 2           & \hbox{\huge\(\frac{env_v\: ,\ sto\, \vdash b \rightarrow_b\: \textit{ff}}{env_v\: ,\ sto\, \vdash \neg b \rightarrow_b\: \textit{tt}}\) } \vspace {0.1pt}\\ \hline
+\end{tabular}
+\end{adjustbox}
+    \caption{Expr:Boolean}
+    \label{fig:my_label}
+\end{table}
+
+%fik ikke gemt den med parentheses soz xoxo
+
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+
+    \hline
+    \vspace {0.1pt} & \\
+And 1     & \hbox{\huge\(\frac{env_v\: ,\ sto\, \vdash b_1 \rightarrow_b\: \textit{tt} \quad env_v\: ,\ sto\, \vdash b_2 \rightarrow_b\: \textit{tt}}{env_v\: ,\ sto\, \vdash b_1 \wedge b_2 \rightarrow_b\: \textit{tt}}\)} \vspace{0.1pt} \\ \hline 
+    \vspace {0.1pt} & \\
+And 2     & \hbox{\huge\(\frac{env_v\: ,\ sto\, \vdash b_i \rightarrow_b\: \textit{ff}}{env_v\: ,\ sto\, \vdash b_1 \wedge b_2 \rightarrow_b\: \textit{ff}} \quad \textit{i} \in {1,2}\)} \vspace{0.1pt} \\ \hline 
+    \vspace {0.1pt} & \\
+Or 1     & \hbox{\huge\(\frac{env_v\: ,\ sto\, \vdash b_i \rightarrow_b\: \textit{tt}}{env_v\: ,\ sto\, \vdash b_1 \vee b_2 \rightarrow_b\: \textit{tt}} \quad \textit{i} \in {1,2}\)} \vspace{0.1pt} \\ \hline 
+    \vspace {0.1pt} & \\
+Or 2     & \hbox{\huge\(\frac{env_v\: ,\ sto\, \vdash b_1 \rightarrow_b\: \textit{ff} \quad env_v\: ,\ sto\, \vdash b_2 \rightarrow_b\: \textit{ff}}{env_v\: ,\ sto\, \vdash b_1 \vee b_2 \rightarrow_b\: \textit{ff}}\)} \vspace{0.1pt} \\ \hline 
+    \end{tabular}
+    \caption{Expr:Gates}
+    \label{fig:my_label}
+\end{table}
+
+
+\begin{table}[H]
+\begin{adjustbox}{center}
+\begin{tabular}{|c|c|}
+\hline
+\vspace {0.1pt} & \\
+  if1 &  \hbox{\huge\(\frac{env_V\: ,\ env_F\, \vdash \langle S_1,\: sto \rangle \rightarrow sto'}{ env_V\: ,\ env_F\, \vdash \langle if\ b\ then\ S_1\ else\ S_2,\: sto\ end \rangle \rightarrow sto'}\)\normalsize\( \quad \textbf{if} \quad env_V\: ,\ sto \vdash b \rightarrow_b \textit{tt}\)} \vspace{0.1pt} \\ \hline 
+    \vspace {0.1pt} & \\
+ if2 &   \hbox{\huge\(\frac{env_V\: ,\ env_F\, \vdash \langle S_2,\: sto \rangle \rightarrow sto'}{ env_V\: ,\ env_F\, \vdash \langle if\ b\ then\ S_1\ else\ S_2,\: sto\ end \rangle \rightarrow sto'}\)\normalsize\( \quad \textbf{if} \quad env_V\: ,\ sto \vdash b \rightarrow_b \textit{ff}\)} \vspace{0.1pt} \\ \hline 
+    \vspace {0.1pt} & \\
+  while1 &  \pbox{20cm}{\Large \(env_V\: ,\ env_F\, \vdash \langle S,\: sto \rangle \rightarrow sto''\)\\
+  \huge \(\frac{env_V\: ,\ env_F\, \vdash \langle while\ b\ do\ S\ end,\: sto'' \rangle \rightarrow sto'}{env_V\: ,\ env_F\, \vdash \langle while\ b\ do\ S\ end,\: sto \rangle \rightarrow sto'} \)\normalsize\(\quad  \textbf{if} \quad env_V\: ,\ sto\, \vdash b \rightarrow_b tt\)} \vspace{0.1pt} \\ \hline 
+\vspace {0.1pt} & \\
+  while2 &  \hbox{\Large\(env_V\: ,\ env_F\, \vdash \langle while\ b\ do\ S end\: ,\ sto \rangle 
+  \rightarrow sto\)\normalsize\( \quad \textbf{if} \quad env_V\: ,\ env_F \, \vdash b \rightarrow_b ff\)} \vspace{0.1pt} \\ \hline 
+\vspace {0.1pt} & \\
+  for1 &  \hbox{\huge\(\frac{\langle S,\: s \rangle \rightarrow s'' \quad \langle for\ a_1\ op\ a_2\ do\ S,\: s''\ end \rangle \rightarrow s'}{\langle for\ a_1\ op\ a_2\ do\ S\ end,\: s \rangle \rightarrow s'} \)\normalsize\(\quad \begin{aligned} \textbf{where}\ op \in \{upto,\: downto\} \\ \\ \textbf{if}\ \begin{aligned} s \vdash a_1 < a_2 \rightarrow_b\  \textit{tt}\ \textbf{if}\ op = upto \\ s \vdash a_1 > a_2 \rightarrow_b\  \textit{tt}\ \textbf{if}\ op = downto \end{aligned} \end{aligned}\) } \vspace{0.1pt} \\ \hline 
+  for2 &  \hbox{\Large\(\langle for\ a_1\ op\ a_2\ do\ S,\: s\ end \rangle \rightarrow s\)\normalsize\( \quad \textbf{if} \quad s \vdash b \rightarrow_b \textit{ff}\)} \vspace{0.1pt} \\ \hline
+    
+  
+\end{tabular}
+\end{adjustbox}
+\caption{Caption}
+    \label{fig:my_label}
+\end{table}

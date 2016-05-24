@@ -1,0 +1,52 @@
+\chapter{Syntax of \lang{}}
+This chapter describes the different kinds of parser generators and analyses what features they have, to be able to make a conclusion for which one is the most suitable for this project. Afterwards, a language for describing syntax is presented, and then the syntax and grammar of \lang{} is presented and explained. 
+\input{sections/Syntax/ParserGenerators.tex}
+
+\subsection{EBNF notation}
+In parser generators like SableCC, the syntax definition is split into several parts. The first part is a token definition section. In this section, common tokens that will be used in the actual definition of the syntax are defined. Usually, the section looks something like this: 
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[]
+    ...
+    mod = '%';
+    lparen = '(';
+    rparen = ')';
+    numval = '-'? digit*;
+    newline = (cr | lf | cr lf)+;
+    id = letter(letter|digit)*;
+    textval = '"' [any - '"']* '"';
+    blank = space*;
+    comment = '/' '*'[any - ['*' + '/']]* '*' '/';
+    \end{lstlisting}
+    \caption{Snippet from the Tokens section of the grammar of \lang{} in EBNF}
+    \label{fig:EBNFtoken}
+\end{figure}
+
+This section mainly exists to unclutter the syntax definition that follows. 
+The syntax definition consists of a collection of productions. A production is a left-hand side(LHS) which can be transformed into a right-hand side(RHS). These productions are also called rewriting rules.
+
+The "|" is a way of writing alternatives in a production, so that it can be rewritten as multiple things. It is written like this:
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[]
+    ...
+    type    = num
+            | bool
+            | text
+            | id;
+    ...
+    \end{lstlisting}
+    \caption{Snippet from the Productions section of the grammar of \lang{} in EBNF}
+    \label{fig:EBNFalt}
+\end{figure}
+
+
+The LHS is always a nonterminal. A nonterminal is a syntactic part that can be transformed into a terminal symbol by being put through a series of productions.
+A terminal symbol is the final point of a production. For example, a "val" nonterminal, denoting a value of some kind, might end up being evaluated into a number(num) or string("text") in \lang{}. 
+
+
+
+\input{sections/Syntax/OurSyntax.tex}
+\input{sections/Syntax/FormalGrammar.tex}

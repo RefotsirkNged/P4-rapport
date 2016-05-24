@@ -1,0 +1,132 @@
+\section{The syntax of \lang{}}
+\label{sec:OurSyntax}
+In this section, the grammar of \lang{} is described and arguments are given for the decisions taken. Furthermore, some of the more interesting parts of the grammar are illuminated.
+The full grammar, stripped of all the implementation specific parts:\\
+
+\input{resources/GrammarFiles/PrettyGramma.tex}
+
+
+
+As mentioned in section \ref{sec:EBNFinSable}, the initial non-terminal production is the first non-terminal specified in the grammar. The initial non-terminal symbol and its production is called \textit{prog}, and is the entry point of a program in \lang{}:
+\begin{figure}[H]
+   \centering
+    \begin{lstlisting}[]
+    ...
+    prog = global* maindcl newline? classdcl*
+    ...
+    \end{lstlisting}
+    \caption{Snippet from Pretty Grammar\label{fig:StartProg}}
+\end{figure}
+As seen in figure \ref{fig:StartProg}, the \textit{prog} consists of an optional series of global variables, the main declaration and an optional series of class declarations.
+
+\lang{} uses newline as line endings. Specifically, it is implemented by using a token specified in the grammar, and having that token trail behind nearly all productions. This is used instead of ";" like in c\# or other c-like languages. 
+
+\subsection{Operator Precedence}
+In \lang{}, operator precedence levels are implemented as follows:
+
+\begin{table}[H]
+\centering
+
+\begin{tabular}{|l|l|c|}
+\hline
+  & Name                                                                                                                                  & Symbol                                                                                                 \\ \hline
+1 & Parentheses                                                                                                                           & ( )                                                                                                    \\ \hline
+2 & \begin{tabular}[c]{@{}l@{}}Unary minus\\ Logical Not\end{tabular}                                                                     & \begin{tabular}[c]{@{}l@{}}-\\ not\end{tabular}                                                        \\ \hline
+3 & \begin{tabular}[c]{@{}l@{}}Division\\ Multiplication\\ Modulo\end{tabular}                                                            & \begin{tabular}[c]{@{}l@{}}/\\ *\\ \%\end{tabular}                                                     \\ \hline
+4 & \begin{tabular}[c]{@{}l@{}}Addition\\ Subtraction\end{tabular}                                                                        & \begin{tabular}[c]{@{}l@{}}+\\ -\end{tabular}                                                          \\ \hline
+5 & \begin{tabular}[c]{@{}l@{}}Equals\\ Not equals\\ Greater than\\ Less than\\ Greater than or equals\\ Less than or equals\end{tabular} & \begin{tabular}[c]{@{}l@{}}=\\ !=\\ \textgreater\\ \textless\\ \textgreater=\\ \textless=\end{tabular} \\ \hline
+6 & Logical and                                                                                                                           & and                                                                                                    \\ \hline
+7 & Logical or                                                                                                                            & or                                                                                                     \\ \hline
+\end{tabular}
+\caption{The operator precedence of \lang{} \label{tab:precedence}}
+\end{table}
+
+The precedence can be seen in table \ref{tab:precedence}, where the first entry has the highest precedence and the last has the lowest.
+
+The precedence of \lang{} follows the ordinary mathematical rules as described in \citep{precedence}.
+
+
+\todo{Insert code snippet that shows how this precedence is implemented and describe it}
+
+\subsection{\textit{if}-statements}
+\textit{if}-statements in \lang{} always have an associated \textit{end} to eliminate all occurrences of dangling else problems.
+As seen in figure \ref{fig:danglingElse}, the dangling else problem does not occur, as the \textit{if}-statement on line 5 ends on line 7, thus can not be associated to the \textit{else} on line 8.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    bool someStmt
+    bool someOtherStmt
+    
+    if someStmt then
+        if someOtherStmt then
+            /* Do something */
+        end
+    else
+        /*Do something */
+    end
+    \end{lstlisting}
+    \caption{Snippet from Pretty Grammar \label{fig:danglingElse}}
+\end{figure}
+
+The way \textit{if}-statements are implemented in \lang{} can be seen on figure \ref{fig:ifGrammar}.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[]
+    ...
+    ifstmt      = "if" bexpr "then" newline stmt* elsestmt? "end"
+    
+    elsestmt    = "else" newline stmt*
+                | "else if" bexpr "then" newline stmt* elsestmt?
+    ...
+    \end{lstlisting}
+    \caption{Snippet from Pretty Grammar\label{fig:ifGrammar}}
+\end{figure}
+
+As seen here, \textit{if}-statements consist of the word "\textit{if}", a boolean expression, the word "\textit{then}", a newline, a series of optional statements, an optional else-statement, and the word "\textit{end}", meaning the current \textit{if}-statement has ended.
+
+\subsection{Dot-notations}
+The dot notation grammar can be seen in figure \ref{fig:DotNotion}. As seen here, it is possible to make as many multicall \todo{The concept of 'multicall' is not standard. forklar det eller saadan noget} the user wants.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[]
+    ...
+    classcall   = "." multicall      
+                | funccall
+                
+    singlecall  = id
+                | funccall
+                
+    multicall   = singlecall
+                | singlecall "." multicall
+    ...
+    \end{lstlisting}
+    \caption{Snippet from Pretty Grammar\label{fig:DotNotion}}
+\end{figure}
+\todo{Koden er vist foraeldet. Opdater og saadan}
+
+\todo{Her har gio lavet sin egen udgave af det ovenfor: vv}
+\begin{comment}
+Genfunccal = (genID'.')* funccal
+           | (genfunccal '.')* funccal      Generalized function call
+           
+           
+genId      = (genId '.')* id
+           | (genfunccall '.')* id   Generalized variable / class identificator.
+\end{comment}
+
+This means that the user can create as many nested dot notations they need.
+
+By being able to call multicall as many times the user wants, they can go between as many refs in class as they want and in the end call a function or a variable in the form of an id or funccall in singlecall. \todo{subsection not clear}
+
+
+
+\todo{Suggestion for this section:}
+\begin{comment}
+To make the description of the syntax of BFGL more clear, Gio suggest to start from section 4.3 (The syntax of BFGL) and give the ENTIRE EBNF for BFGL (replacing trivial token with their definition).
+
+
+After that you can explain some design choices made in BFGL by referring to the corresponding productions as you did starting from section 4.3.1
+\end{comment}

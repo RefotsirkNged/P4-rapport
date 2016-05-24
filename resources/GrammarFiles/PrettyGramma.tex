@@ -1,0 +1,110 @@
+    prog        =   global* maindcl newline? classdcl*
+
+    global      =   vardcl newline
+
+    maindcl     =   main begin newline stmt* end
+
+    classdcl    =   newline eclass id inherit? begin newline classbody* end
+
+    classbody   =   vardcl newline                                                            
+                |   eventdcl newline                                                
+                |   dcl func id lparen formalparam? rparen begin funcbody end newline
+
+    funcbody    =   newline stmt* return
+
+    return      =   {returnid} treturn bexpr newline
+                |   {empty}                                                 
+
+
+    stmt        =   vardcl newline                      
+                |   set id to bexpr newline               
+                |   for id upto bexpr do [a]:newline stmt* end [b]:newline 
+                |   for id downto bexpr do [a]:newline stmt* end [b]:newline
+                |   while bexpr do [a]:newline stmt* end [b]:newline  
+                |   funcdotcall newline         
+                |   ifstmt newline                      
+
+    vardcl      =   dcl type id         
+                |   dcl type id to bexpr      
+                |   dcl list of type id      
+
+    ifstmt      =   if bexpr then newline stmt* elsestmt? end
+
+    elsestmt    =   else newline stmt*
+                |   {elseif} else if bexpr then newline stmt* elsestmt?
+
+
+    bexpr       =   bexpr or bterm             
+                |   bterm                   
+
+    bterm       =   bterm and relation 
+                |   relation
+
+    relation    =   expression equals expression
+                |   expression notequals expression
+                |   expression greater expression
+                |   expression less expression       
+                |   expression greaterequals expression 
+                |   expression lessequals expression   
+                |   expression 
+
+    expression  =   expression minus term
+                |   expression plus term
+                |   term
+
+
+    term        =   term divide [right]:factor  
+                |   term mult [right]:factor  
+                |   term mod [right]:factor  
+                |   unary               
+
+    unary       =   minus factor 
+                |   not factor
+                |   factor  
+
+    factor      =   val
+                |   id
+                |   funcdotcall
+                |   iddotcall
+                |   lparen bexpr rparen
+
+    type        =   num  
+                |   bool     
+                |   text                        
+                |   id   
+
+    val         =   numval
+                |   textval
+                |   boolval
+                |   this
+                |   new id lparen actualparam? rparen
+
+    funccall    =   id lparen actualparam? rparen
+
+
+    actualparam =   bexpr
+                |   {mulparam} bexpr comma [rest]:actualparam               {-> [bexpr.expr, rest.expr]};
+
+    formalparam {-> param*}  =   {singleparam} type id                                  {-> [New param.formal(type.type, id)]}
+                            |   {mulparam} type id comma formalparam                    {-> [New param.formal(type.type, id), formalparam.param]};
+
+    funcdotcall {-> call}   =   {mulcall} singlecall dot multicallfunc                  {-> New call.dot(singlecall.call, [multicallfunc.call])}
+                            |   {single} funccall                                       {-> funccall.call};
+
+    iddotcall {-> call}     =   {mulcall} singlecall dot multicallid                    {-> New call.dot(singlecall.call, [multicallid.call])};
+
+    singlecall  {-> call}   =   {idcall} id                                             {-> New call.var(id)}
+                            |   {funccall} funccall                                     {-> funccall.call};
+
+    multicallid {-> call*}  =   {single} id                                             {-> [New call.var(id)]}
+                            |   {multi} singlecall dot [rest]:multicallid                 {-> [singlecall.call, rest.call]};
+
+    multicallfunc   {-> call*}  =   {single} funccall                                   {-> [funccall.call]}
+                                |   {multi} singlecall dot [rest]:multicallfunc             {-> [singlecall.call, rest.call]};
+
+
+    inherit     {-> inherit}    =    is type                                            {-> New inherit(type)};
+
+    eventdcl    {-> pdcl}   =   id lparen formalparam* rparen do newline baseconstr? [body]:stmt* end          {-> New pdcl.event(id, [formalparam.param], baseconstr.base, [body.stmt])};
+
+    baseconstr  {-> base}   =   tbase lparen actualparam? rparen newline                {-> New base.base([actualparam.expr])};

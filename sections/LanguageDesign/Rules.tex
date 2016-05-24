@@ -1,0 +1,133 @@
+\section{Type rules}
+Type rules are used to define what the different types of the language can be converted into. This is an informal specification of the type rules of \lang{}. A formal specification will follow in chapter \ref{chap:semantics}. This informal definition of the type rules will serve as a quick guide to what is allowed and what is not allowed in \lang{}.
+
+\subsection{Num}
+Num, the representation used for numbers in \lang{}, can be converted to two things, an example of this can be found on figure \ref{fig:numconvertions}
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    dcl num firstNum to 0
+    dcl num secondNum to 1
+    dcl num randomNum to 19233  /* */
+    dcl string targetString
+    dcl bool targetBool
+    
+    set targetString to randomNum /* Any num can be converted to a string representation, where the string will then be an array of chars corresponding to the num.*/
+    set targetBool to firstNum /* If a zero is converted to a bool representation, then the bool representation will be set to false.*/
+    set targetBool to secondNum /* If a one is converted to a bool , then the bool representation will be set to true.*/
+    set targetbool to randomNum /* Any number, except for zero, converted into a bool, will result in the bool being set to true.*/
+    \end{lstlisting}
+    \caption{Example of how Num can be typecasted.}
+    \label{fig:numconvertions}
+\end{figure}
+
+These are the only direct conversions of num that is allowed in \lang{}. 
+
+\subsection{Text}
+Text, the representation for words (strings) used in \lang{}, cannot be directly converted to other types in \lang{}. This is done to avoid a lot of confusion that can appear when trying to convert strings to other representations. An example of why this is not allowed is found on figure \ref{fig:stringconversions}.
+
+\begin{figure}[H]
+    \centering
+    \begin{lstlisting}[style=gglang]
+    dcl text firstText to "false" /* When converting this to a bool, the result would intuitively be false. */
+    dcl text secondText to "False" /* But, a beginner might write it uppercased, which would then lead to errors. */
+    \end{lstlisting}
+    \caption{Example of why Num can NOT be typecasted.}
+    \label{fig:stringconversions}
+\end{figure}
+
+\subsection{Bool}
+A bool in \lang{} can be converted to a text. a bool with value true will convert to the text "true", and false to the text "false". 
+
+With the type rules of \lang{} covered, the scope rules can be described, in the same manner as seen in this section. This is done in the following section.
+
+\section{Scope rules}
+In this section, an informal specification of the scope rules of \lang{} is defined. A formal specification is found in chapters \ref{chap:BFGLSyntax} and \ref{chap:semantics}.\\
+
+Scope rules define where declared variables can be accessed. In general, there is a distinction between local scope and global scope when describing the scope of variables. A variable is local to a block if it is declared within it, and non-local if it is visible to the block, but not declared there. \lang{} distinguishes between three types of scopes:
+\begin{itemize}
+    \item Global scope
+    \item Class scope
+    \item block scope
+\end{itemize}
+
+The globally scoped variables are variables that are visible throughout the whole program, provided they are declared before they are referenced. For a variable to be globally scoped, it has to be declared outside the classes like in code snippet \ref{fig:globalscope}. 
+
+\begin{figure}[H]
+    \centering
+    
+    \begin{lstlisting}[style=gglang]
+    dcl num someCounter to 0    /* Globally scoped variable that         */
+                                /* is accessible in the classes and main */
+    
+    Main begin
+        set someCounter to someCounter + 1
+        dcl SomeClass someClass to new SomeClass()
+    end /* someCounter will here be 11 */
+    
+    class SomeClass begin
+        OnConstruct() do 
+            set someCounter to someCounter + 10
+        end
+    end
+    \end{lstlisting}
+    \caption{Example of a globally scoped variable}
+    \label{fig:globalscope}
+\end{figure}
+
+Class scope means that the variable is accessible in the class, provided that it is declared before it is referenced. This means that in code snippet \ref{fig:classscope} there is an error, as \textit{someCounter} can not be seen in \textit{SomeClass} and therefore can not add 10 to the variable.
+
+\begin{figure}[H]
+    \centering
+    
+    \begin{lstlisting}[style=gglang]
+    
+    
+    Main begin
+        dcl num someCounter to 0
+        set someCounter to someCounter + 1
+        dcl SomeClass someClass to new SomeClass()
+    end /* someCounter will here be 1 */
+    
+    class SomeClass begin
+        OnConstruct() do 
+            set someCounter to someCounter + 10 /*gives an error, as it can not see someCounter */
+        end
+    end 
+    \end{lstlisting}
+    \caption{Example of a wrong use of class scoping}
+    \label{fig:classscope}
+\end{figure}
+
+The block scope is when variables are declared inside a block, which in \lang{} means declared inside while-loops, if-statements or for-loops. This means that it is possible to make nested block scopes where variables are not visible if they are declared a step further into a series of nested blocks. This is illustrated in code snippet \ref{fig:blockscope}, where \textit{someCounter} is not visible in line 12, and therefore can not be incremented.
+
+\begin{figure}[H]
+    \centering
+    
+    \begin{lstlisting}[style=gglang]
+    
+    Main begin
+        dcl bool someCondition to true
+        dcl bool someOtherCondition to true
+        
+        if someCondition then
+            while someOtherCondition do
+                dcl num someCounter to 0
+                set someOtherCondition to false
+            end
+            
+            set someCounter to someCounter + 1      /* This gives an error as it is not visible     */
+        end
+        
+    end                                             /* someCounter will here be 0                    */
+    
+    \end{lstlisting}
+    \caption{Example of a wrong use of block scoping}
+    \label{fig:blockscope}
+\end{figure}
+
+To solve this problem, \textit{someCounter} could be declared above the if-statement and thereafter set to 0 inside the while-loop. This way, it is visible in line 12 and the code no longer contains any errors.
+
+This concludes the informal type and scope rule specification of \lang{}.
+

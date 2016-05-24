@@ -1,0 +1,51 @@
+\section {Formal grammar specification of \lang{}}
+In \ref{pgen} SableCC was chosen as the parser/scanner generator to be used in this project. Because of this, the grammar has certain traits/naming conventions that had to be enforced for it to work with SableCC. An example of this is the "prog" production:
+
+\begin{figure}[H]
+  \centering
+    \begin{lstlisting}
+     prog        {-> prog}   =   global* maindcl newline? classdcl*
+    \end{lstlisting}
+  \caption{The prog production. This tells SableCC how to name certain parts of the output.}
+  \label{fig:prog}
+\end{figure}
+
+In the scope of this chapter the grammar will however have these parts stripped out, to facilitate reading. The full grammar, with nothing stripped out, can be found in appendix \ref{FullGrammar}. \todo{Present the grammar as an EBNF one and just mention that the actual grammar spec for SableCC can be found in appendix \ref{FullGrammar}}
+
+\subsection{Helpers and Tokens}
+The first thing to be specified in the grammar file is a "Helper" section:
+\todo{insert helpers here pls with label{helpersexample}}. 
+This section exists to simplify the next section, by providing abstractions over certain character classes.
+Then comes a token specification section, that specifies all the different tokens allowed in \lang{}. Again, this section exists to simplify the next section, to make writing the productions cleaner and more simple to read. A snippet of this section, which defines what an id can be in \lang{}: \todo{insert snippet pls with ID token}
+This section also defines which tokens to ignore, which in \lang{}'s are these:\todo{insert ignore token snippet}
+
+\subsection{Productions}
+The starting point of any \lang{} program is with a "prog" production. This production can do the following: 
+\todo{insert snippet with prog}
+If a derivation is followed down to the "maindcl" production, a quirk of using SableCC can be seen: 
+\todo{insert maindcl}
+The "eclass" token which is used here is really just an abstraction over the word "class". In order for SableCC to recognize something as a token when writing the production rules, it has to be specified in the token section. This is why there is multiple instances in the token specification where a token is set to be recognized by a word which is the exact same spelling. Another example of this is "main" as it is written in the "maindcl" in \todo{insert ref to maindcl snippet}. This again refers to a word of the exact same spelling.
+In \lang{} newline is used to enforce a newline after classes, before a function declaration, and similar: 
+\todo{insert a couple examples of this}
+It is not used to signify the beginning and end of scopes, but only to provide the parser with an end to statements such as "return": 
+\todo{}
+So that it might recognize that the return statement is done. This is done multiple times all over the grammar specification, to signify ending of a statement, end of a declaration, the end of a classbody, and the like.
+
+\subsubsection{Operator precedence}
+Operator precedence is enforced through a series of productions which starts with "bexpr":
+\todo{insert bexpr}
+For something to have precedence over something else in a grammar specification like this, it has to appear lower on the Abstract Syntax Tree(AST). The AST will be explained further later on, but it is just a tree where an internal node is a production, and a leaf is a terminal symbol. This is enforced in \lang{} by having "bexpr" being the base for any expression/operation. 
+From there, the productions are derived one by one, until the desired expression is reached. A "1+1" expression would go through these derivations, shown as an AST:
+\todo{insert tree example}
+If the expression instead was "1+1*4" the AST would look like this:
+\todo{anotha one}
+As is seen, the multiplication production is lower in the AST than the addition production is. This enforces precedence, because the compiler uses depth-first as the method to travel the AST, as explained in \todo{insert ref}. This construction is also used to make nested expressions, because at some point in the derivation of bexpr, it is allowed to derivate backwards to "bexpr".
+\subsubsection{Function declarations, Event declarations, Inheritance}
+Function calls are achieved with parameter by using "bexpr", which also lets the function take expressions as parameters. Event declarations look a lot like a function call, but the important bit is that it is named differently on the AST. This allows for proper handling of these events later on, seperate from the handling of the function declarations. This is specifically important in \lang{} because it has some build in events that are used to handle game-logic and graphics, which needs to be handled seperately from a normal function declaration.
+\lang{} is an OOP language\todo{insert thingy with short explain of oop}, and as such it needs some form of inheritance. This is achieved with the "inherit" production:
+\todo{insert inherit prod}
+This allows for single-inheritance, not multiple inheritance, as the "type" result of deriving "inherit" can only go to an object, not multiple objects.
+
+
+
+
