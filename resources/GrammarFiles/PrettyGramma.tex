@@ -83,7 +83,7 @@
 
 
     actualparam =   bexpr
-                |   {mulparam} bexpr comma [rest]:actualparam               {-> [bexpr.expr, rest.expr]};
+                |   bexpr comma actualparam
 
     formalparam {-> param*}  =   {singleparam} type id                                  {-> [New param.formal(type.type, id)]}
                             |   {mulparam} type id comma formalparam                    {-> [New param.formal(type.type, id), formalparam.param]};
